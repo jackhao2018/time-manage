@@ -6,6 +6,7 @@ from .models import Strategys
 
 # Create your views here.
 
+
 class StrategysView(APIView):
     """
     post: 为用户新增策略
@@ -21,8 +22,6 @@ class StrategysView(APIView):
         strategy_info = Strategys.objects.filter(creator=user_id)
         serializer = StrategySerializer(instance=strategy_info, many=True)
         return JsonResponse(serializer.data, safe=False)
-
-
 
     @staticmethod
     def post(request):
