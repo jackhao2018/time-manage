@@ -21,7 +21,7 @@ class StrategysView(APIView):
         user_id = request.GET.get('userId')
         strategy_info = Strategys.objects.filter(creator=user_id)
         serializer = StrategySerializer(instance=strategy_info, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data}, safe=False)
 
     @staticmethod
     def post(request):
@@ -34,4 +34,4 @@ class StrategysView(APIView):
         serializer = StrategySerializer(data=data_dic)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return JsonResponse(serializer.data)
+        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data}, status=200)
