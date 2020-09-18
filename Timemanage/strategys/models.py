@@ -18,3 +18,5 @@ class Strategys(models.Model):
     class Meta:
         managed = False
         db_table = 'strategys'
+# Unable to inspect table 'policy_datails'
+# The error was: (1146, "Table 'qianye.policy_datails' doesn't exist")

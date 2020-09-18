@@ -34,4 +34,4 @@ class StrategysView(APIView):
         serializer = StrategySerializer(data=data_dic)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data}, status=200)
+        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data})
