@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "71bf79aa-6f86-4fba-865e-53d8993e056a",
+		"name": "time-manage",
+		"description": "调试接口\r\n\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "新增策略",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "新增策略"
+			},
+			"response": []
+		},
+		{
+			"name": "我的-收藏",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

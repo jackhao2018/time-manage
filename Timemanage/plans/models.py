@@ -8,15 +8,17 @@
 from django.db import models
 
 
-class Strategys(models.Model):
-    strategy_id = models.AutoField(primary_key=True)
-    creator = models.IntegerField()
-    strategy_name = models.CharField(max_length=255)
-    strategy_details = models.CharField(max_length=255)
+class Plans(models.Model):
+    plan_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(to='my.Users', on_delete=models.DO_NOTHING)
+    plan_name = models.CharField(max_length=255)
+    strategy = models.ForeignKey(to='strategys.Strategys', on_delete=models.DO_NOTHING,blank=True, null=True)
+    current_time = models.DateTimeField()
+    begin_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    status = models.IntegerField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'strategys'
-# Unable to inspect table 'policy_datails'
-# The error was: (1146, "Table 'qianye.policy_datails' doesn't exist")
+        db_table = 'plans'
