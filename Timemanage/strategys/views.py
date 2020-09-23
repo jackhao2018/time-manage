@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from .serializer import StrategySerializer
 from django.http import JsonResponse
 from .models import Strategys
+from rest_framework import status
 
 # Create your views here.
 
@@ -19,9 +20,13 @@ class StrategysView(APIView):
         :return:
         """
         user_id = request.GET.get('userId')
-        strategy_info = Strategys.objects.filter(creator=user_id)
-        serializer = StrategySerializer(instance=strategy_info, many=True)
-        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data}, safe=False)
+        try:
+            strategy_info = Strategys.objects.filter(creator=user_id)
+            serializer = StrategySerializer(instance=strategy_info, many=True)
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
 
     @staticmethod
     def post(request):
@@ -31,7 +36,12 @@ class StrategysView(APIView):
             'strategy_details': request.POST.get('strategyDetails'),
             'remarks': request.POST.get('remarks'),
         }
-        serializer = StrategySerializer(data=data_dic)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return JsonResponse({'code': 200, 'msg': '成功', 'result': serializer.data})
+        print(data_dic)
+        try:
+            serializer = StrategySerializer(data=data_dic)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
