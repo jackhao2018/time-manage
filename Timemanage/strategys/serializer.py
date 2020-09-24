@@ -20,6 +20,8 @@ class StrategySerializer(serializers.ModelSerializer):
         print('data数据：{}'.format(data))
         if data is None:
             raise serializers.ValidationError('用户名不能为空')
+        return data
+
 
 
     def validate(self, attrs):
