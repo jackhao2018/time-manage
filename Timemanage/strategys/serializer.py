@@ -13,17 +13,22 @@ class StrategySerializer(serializers.ModelSerializer):
         model = Strategys
         fields = '__all__'
 
-    # 这里给入参字段自定义一些校验，并且定义返回信息, 这个方法务必返回校验的值,否则和下个方法校验时,会为None
-    #比如现在不返回data的话,在多字段校验那块strategy_name的值会为None
+
+    # 这里给入参字段自定义一些校验，并且定义返回信息
     @staticmethod
     def validate_strategy_name(data):
         print('data数据：{}'.format(data))
+        if data is None:
+            raise serializers.ValidationError('用户名不能为空')
         return data
 
-    @staticmethod
-    def validate(attrs):
-        strategy_name = attrs['strategy_name']
-        strategy_details = attrs['strategy_details']
+
+
+    def validate(self, attrs):
+        print(f'{attrs}')
+        strategy_name = attrs.get('strategy_name')
+        strategy_details = attrs.get('strategy_details')
+        print(f'{strategy_name}---{strategy_details}')
 
         if strategy_name is None or strategy_details is None:
             raise serializers.ValidationError('策略名或策略细节不能为空！')
@@ -36,7 +41,7 @@ class StrategySerializer(serializers.ModelSerializer):
         user_id = data.get('creator')
         strategy_details = data.get('strategy_details')
         remarks = data.get('remarks')
-        # print('入参数据分别是：{}，{}，{}，{}'.format(user_id, strategy_name, strategy_details, remarks))
+        print('入参数据分别是：{}，{}，{}，{}'.format(user_id, strategy_name, strategy_details, remarks))
         instance = Strategys.objects.create(creator=user_id, strategy_name=strategy_name, strategy_details=strategy_details, remarks=remarks)
         return instance
 
