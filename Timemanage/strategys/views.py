@@ -28,6 +28,7 @@ class StrategysView(APIView):
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
 
+#todo:策略新增时,即使用户ID不存在于users表也会正常创建策略,这现象是不对的,后续处理.
     @staticmethod
     def post(request):
         data_dic = {
@@ -36,7 +37,6 @@ class StrategysView(APIView):
             'strategy_details': request.POST.get('strategyDetails'),
             'remarks': request.POST.get('remarks'),
         }
-        print(data_dic)
         try:
             serializer = StrategySerializer(data=data_dic)
             if serializer.is_valid(raise_exception=True):

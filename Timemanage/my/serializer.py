@@ -11,7 +11,7 @@ class CollectSerializer(serializers.ModelSerializer):
         model = Collects
         fields = '__all__'
 
-        # 这里定义策略新增时用到的额create方法
+    # 这里定义策略新增时用到的额create方法
     def create(self, validated_data):
         """数据校验成功时，为数据提供新增的方式"""
         strategy_id = validated_data.get('strategy_id')
