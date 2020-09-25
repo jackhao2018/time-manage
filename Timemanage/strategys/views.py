@@ -4,7 +4,7 @@ from .serializer import StrategySerializer
 from django.http import JsonResponse
 from .models import Strategys
 from rest_framework import status
-from .decorator import check_user
+from common.decorator import check_user
 
 @method_decorator(check_user, name='dispatch')
 class StrategysView(APIView):

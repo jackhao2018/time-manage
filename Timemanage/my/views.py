@@ -1,17 +1,18 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import Collects, Users
-from .serializer import CollectSerializer
 from django.http import JsonResponse
 from django.db import connection
+from django.utils.decorators import method_decorator
+from common.decorator import check_user
+
 
 # Create your views here.
 
-#todo:收藏部分有两个问题，一，查询收藏的策略时，返回的字段是超预期的。二，还没有实现正确的连表查询机制
+@method_decorator(check_user, name='dispatch')
 class CollectView(APIView):
 
     #todo:由于涉及到了多表联查,这里暂时使用的原生sql后续再优化成ORM模式
+
     @staticmethod
     def get(request):
         """查询我收藏的策略"""
