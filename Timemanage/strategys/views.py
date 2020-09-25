@@ -4,10 +4,9 @@ from .serializer import StrategySerializer
 from django.http import JsonResponse
 from .models import Strategys
 from rest_framework import status
-from .. import decorator
-# Create your views here.
+from .decorator import check_user
 
-@method_decorator(check_user, name='dispatch')
+# @method_decorator(, name='dispatch')
 class StrategysView(APIView):
     """
     post: 为用户新增策略
@@ -30,7 +29,7 @@ class StrategysView(APIView):
                 return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
         else:
             return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '用户名不能为空！'})
-
+    @check_user
     def post(self, request):
         data_dic = {
             'creator': request.POST.get('userId'),
@@ -38,7 +37,6 @@ class StrategysView(APIView):
             'strategy_details': request.POST.get('strategyDetails'),
             'remarks': request.POST.get('remarks'),
         }
-        print(data_dic)
         try:
             serializer = StrategySerializer(data=data_dic)
             if serializer.is_valid(raise_exception=True):
@@ -46,6 +44,4 @@ class StrategysView(APIView):
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            print('不会走这里？')
-            print(serializer.data)
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
