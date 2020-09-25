@@ -6,7 +6,7 @@ from .models import Strategys
 from rest_framework import status
 from .decorator import check_user
 
-# @method_decorator(, name='dispatch')
+@method_decorator(check_user, name='dispatch')
 class StrategysView(APIView):
     """
     post: 为用户新增策略
@@ -29,8 +29,9 @@ class StrategysView(APIView):
                 return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
         else:
             return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '用户名不能为空！'})
-    @check_user
-    def post(self, request):
+
+    @staticmethod
+    def post(request):
         data_dic = {
             'creator': request.POST.get('userId'),
             'strategy_name': request.POST.get('strategyName'),
