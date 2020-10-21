@@ -10,12 +10,15 @@ def check_user(fn):
         user_id = request.POST.get('userId') if request.method == 'POST' else request.GET.get('userId')
 
         cursor = connection.cursor()
-        cursor.execute(f"select count(*) num from users where user_id={user_id}")
-        user_info = cursor.fetchall()
+        try:
+            cursor.execute(f"select count(*) num from users where user_id={user_id}")
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            user_info = cursor.fetchall()
 
         if user_info[0][0]:
             return fn(request)
         else:
             return JsonResponse({'code': status.HTTP_404_NOT_FOUND, 'err_msg': '不存在的用户信息，请重新输入'})
-
     return _check

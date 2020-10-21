@@ -19,7 +19,8 @@ class StrategysView(APIView):
         :return:
         """
         user_id = request.GET.get('userId')
-        if user_id:
+        # print(f'user_id的值是：{user_id}，数据类型是{type(user_id)}')
+        if user_id is not None:
             try:
                 strategy_info = Strategys.objects.filter(creator=user_id)
                 serializer = StrategySerializer(instance=strategy_info, many=True)
@@ -28,7 +29,7 @@ class StrategysView(APIView):
             else:
                 return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
         else:
-            return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '用户名不能为空！'})
+            return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '请输入用户名！'})
 
     @staticmethod
     def post(request):
