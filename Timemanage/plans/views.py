@@ -16,6 +16,7 @@ class PlansView(APIView):
 
         try:
             plan_info = Plans.objects.filter(user_id=user_id)
+            print(f'plan_info：{plan_info}信息')
             serializer = PlanSerializer(instance=plan_info, many=True)
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})

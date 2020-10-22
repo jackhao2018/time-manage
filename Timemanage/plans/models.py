@@ -7,7 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
+#todo:这里strateg数据库的字段是strategy来着，这里暂时改不了
 class Plans(models.Model):
     plan_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(to='my.Users', on_delete=models.DO_NOTHING)
@@ -17,6 +17,8 @@ class Plans(models.Model):
     begin_time = models.DateTimeField()
     end_time = models.DateTimeField()
     status = models.IntegerField()
+    level = models.IntegerField()
+    plan_type = models.IntegerField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
