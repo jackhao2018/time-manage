@@ -5,9 +5,6 @@ from django.db import connection
 from django.utils.decorators import method_decorator
 from common.decorator import check_user
 
-
-# Create your views here.
-
 @method_decorator(check_user, name='dispatch')
 class CollectView(APIView):
 
@@ -31,6 +28,7 @@ WHERE
 	AND A.user_id = {} 
 	AND B.creator = C.user_id"""
         user_id = request.GET.get('userId')
+
         try:
             cursor = connection.cursor()
             cursor.execute(_SQL.format(user_id))

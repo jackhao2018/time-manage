@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'strategys/', include(('strategys.urls', 'strategys'), namespace='策略模块')),
     re_path(r'collects/', include(('my.urls', 'collects'), namespace='我的相关')),
+    re_path(r'plans/', include(('plans.urls', 'plans'), namespace='计划表')),
+
 ]
 
 

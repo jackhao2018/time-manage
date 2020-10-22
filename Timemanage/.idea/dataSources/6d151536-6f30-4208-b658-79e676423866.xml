@@ -981,14 +981,14 @@
     </column>
     <column id="303" parent="286" name="status">
       <Position>8</Position>
-      <Comment>计划此时的状态。&#xd;
-0-待执行&#xd;
-1-执行中&#xd;
-2-已完成&#xd;
-3-搁置&#xd;
-4-作废&#xd;
+      <Comment>计划此时的状态。
+0-待执行
+1-执行中
+2-已完成
+3-搁置
+4-作废
 </Comment>
-      <DataType>int(1) unsigned zerofill|0s</DataType>
+      <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
     <column id="304" parent="286" name="remarks">
@@ -996,161 +996,179 @@
       <Comment>本次计划的补充描述</Comment>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <index id="305" parent="286" name="用户ID">
+    <column id="305" parent="286" name="level">
+      <Position>10</Position>
+      <Comment>当前计划的重要程度：
+1：重要-紧急
+2：重要-不紧急
+3：紧急-不重要
+4：不紧急-不重要</Comment>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="306" parent="286" name="plan_type">
+      <Position>11</Position>
+      <Comment>计划的类别：
+1：单次执行计划
+2.多次执行计划</Comment>
+      <DataType>int|0s</DataType>
+      <DefaultExpression>1</DefaultExpression>
+    </column>
+    <index id="307" parent="286" name="用户ID">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="306" parent="286" name="关联的策略ID">
+    <index id="308" parent="286" name="关联的策略ID">
       <ColNames>strategy_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="307" parent="286" name="PRIMARY">
+    <key id="309" parent="286" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>plan_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="308" parent="286" name="用户ID">
+    <foreign-key id="310" parent="286" name="用户ID">
       <ColNames>user_id</ColNames>
       <RefTableName>users</RefTableName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
-    <foreign-key id="309" parent="286" name="关联的策略ID">
+    <foreign-key id="311" parent="286" name="关联的策略ID">
       <ColNames>strategy_id</ColNames>
       <RefTableName>strategys</RefTableName>
       <RefColNames>strategy_id</RefColNames>
     </foreign-key>
-    <column id="310" parent="287" name="user_id">
+    <column id="312" parent="287" name="user_id">
       <Position>1</Position>
       <Comment>关联的用户ID</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="311" parent="287" name="plan_id">
+    <column id="313" parent="287" name="plan_id">
       <Position>2</Position>
       <Comment>关联的计划ID</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="312" parent="287" name="strategy_id">
+    <column id="314" parent="287" name="strategy_id">
       <Position>3</Position>
       <Comment>关联的策略ID</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="313" parent="287" name="execution_time">
+    <column id="315" parent="287" name="execution_time">
       <Position>4</Position>
       <Comment>策略实施的该次时间点</Comment>
       <DataType>datetime|0s</DataType>
     </column>
-    <column id="314" parent="287" name="execution_time_description">
+    <column id="316" parent="287" name="execution_time_description">
       <Position>5</Position>
       <Comment>单次执行时间点的补充描述</Comment>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <column id="315" parent="287" name="remarks">
+    <column id="317" parent="287" name="remarks">
       <Position>6</Position>
       <Comment>备注</Comment>
       <DataType>varchar(500)|0s</DataType>
     </column>
-    <index id="316" parent="287" name="userid">
+    <index id="318" parent="287" name="userid">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="317" parent="287" name="planid">
+    <index id="319" parent="287" name="planid">
       <ColNames>plan_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="318" parent="287" name="strategyid">
+    <index id="320" parent="287" name="strategyid">
       <ColNames>strategy_id</ColNames>
       <Type>btree</Type>
     </index>
-    <foreign-key id="319" parent="287" name="userid">
+    <foreign-key id="321" parent="287" name="userid">
       <ColNames>user_id</ColNames>
       <RefTableName>users</RefTableName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
-    <foreign-key id="320" parent="287" name="planid">
+    <foreign-key id="322" parent="287" name="planid">
       <ColNames>plan_id</ColNames>
       <RefTableName>plans</RefTableName>
       <RefColNames>plan_id</RefColNames>
     </foreign-key>
-    <foreign-key id="321" parent="287" name="strategyid">
+    <foreign-key id="323" parent="287" name="strategyid">
       <ColNames>strategy_id</ColNames>
       <RefTableName>strategys</RefTableName>
       <RefColNames>strategy_id</RefColNames>
     </foreign-key>
-    <column id="322" parent="288" name="strategy_id">
+    <column id="324" parent="288" name="strategy_id">
       <Position>1</Position>
       <Comment>策略ID</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="323" parent="288" name="creator">
+    <column id="325" parent="288" name="creator">
       <Position>2</Position>
       <Comment>创建者的用户ID</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="324" parent="288" name="strategy_name">
+    <column id="326" parent="288" name="strategy_name">
       <Position>3</Position>
       <Comment>策略名</Comment>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="325" parent="288" name="strategy_details">
+    <column id="327" parent="288" name="strategy_details">
       <Position>4</Position>
       <Comment>策略执行时间点分布</Comment>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="326" parent="288" name="remarks">
+    <column id="328" parent="288" name="remarks">
       <Position>5</Position>
       <Comment>策略内容描述</Comment>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <key id="327" parent="288" name="PRIMARY">
+    <key id="329" parent="288" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>strategy_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="328" parent="289" name="user_id">
+    <column id="330" parent="289" name="user_id">
       <Position>1</Position>
       <Comment>用户主键id</Comment>
       <DataType>int(10) unsigned zerofill|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="329" parent="289" name="user_name">
+    <column id="331" parent="289" name="user_name">
       <Position>2</Position>
       <Comment>用户名</Comment>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <column id="330" parent="289" name="email">
+    <column id="332" parent="289" name="email">
       <Position>3</Position>
       <Comment>用户邮箱信息，不能为空</Comment>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="331" parent="289" name="create_time">
+    <column id="333" parent="289" name="create_time">
       <Position>4</Position>
       <Comment>根据创建时间自动填充为当前时间</Comment>
       <DataType>datetime|0s</DataType>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="332" parent="289" name="logout">
+    <column id="334" parent="289" name="logout">
       <Position>5</Position>
       <Comment>是否注销，不能为空</Comment>
       <DataType>int unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
-    <column id="333" parent="289" name="remarks">
+    <column id="335" parent="289" name="remarks">
       <Position>6</Position>
       <Comment>备注</Comment>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <key id="334" parent="289" name="PRIMARY">
+    <key id="336" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>user_id</ColNames>
       <Primary>1</Primary>
