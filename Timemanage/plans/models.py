@@ -10,16 +10,16 @@ from django.db import models
 #todo:这里strateg数据库的字段是strategy来着，这里暂时改不了
 class Plans(models.Model):
     plan_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(to='my.Users', on_delete=models.DO_NOTHING)
+    user_id = models.ForeignKey(to='my.Users',to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id')
     plan_name = models.CharField(max_length=255)
-    strategy = models.ForeignKey(to='strategys.Strategys', on_delete=models.DO_NOTHING,blank=True, null=True)
+    strategy = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING, blank=True, null=True)
     current_time = models.DateTimeField()
     begin_time = models.DateTimeField()
     end_time = models.DateTimeField()
     status = models.IntegerField()
-    level = models.IntegerField()
-    plan_type = models.IntegerField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
+    level = models.IntegerField()
+    plan_type = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
