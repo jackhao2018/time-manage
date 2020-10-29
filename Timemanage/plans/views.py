@@ -8,7 +8,7 @@ from .models import Plans
 from common.decorator import check_user
 from .serializer import PlanSerializer
 
-@method_decorator(check_user, name='get')
+@method_decorator(check_user, name='dispatch')
 class PlansView(APIView):
 
     @staticmethod
