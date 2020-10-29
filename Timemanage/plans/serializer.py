@@ -31,7 +31,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
         if current_time > begin_time:
             raise  serializers.ValidationError('计划开始时间不能小与当前时间')
-        elif begin_time < end_time:
+        elif begin_time > end_time:
             raise serializers.ValidationError('计划结束时间不能小与开始时间')
 
         return attrs

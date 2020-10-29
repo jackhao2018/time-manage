@@ -18,7 +18,7 @@ def check_user(fn):
             user_info = cursor.fetchall()
 
         if user_info[0][0]:
-            return fn(request)
+            return fn(request, *args, **kwargs)
         else:
             return JsonResponse({'code': status.HTTP_404_NOT_FOUND, 'err_msg': '不存在的用户信息，请重新输入'})
     return _check

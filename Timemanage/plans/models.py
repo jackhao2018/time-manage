@@ -12,7 +12,7 @@ class Plans(models.Model):
     plan_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(to='my.Users',to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id')
     plan_name = models.CharField(max_length=255)
-    strategy = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING, blank=True, null=True)
+    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING, blank=True, null=True, db_column='strategy_id')
     current_time = models.DateTimeField()
     begin_time = models.DateTimeField()
     end_time = models.DateTimeField()
