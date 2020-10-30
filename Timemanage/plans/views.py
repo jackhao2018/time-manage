@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from .models import Plans
 from common.decorator import check_user
 from .serializer import PlanSerializer
+from django.db import connection
 
 @method_decorator(check_user, name='dispatch')
 class PlansView(APIView):
@@ -38,7 +39,8 @@ class PlansView(APIView):
         'plan_type' : request.POST.get('plan_type'),
         'strategy_id' : request.POST.get('strategyId') if request.POST.get('strategyId') is None else None
         }
-
+        print(f'request.data包含的数据内容：{request.data}, request.query_params包含的数据内容：{request.query_params}')
+        # data_dic_1 = request.data
         try:
             serializer = PlanSerializer(data=data_dic)
 
@@ -74,3 +76,31 @@ class PlansView(APIView):
         plan_id = args[0]
         Plans.objects.filter(plan_id=plan_id).delete()
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
+
+
+def make_policy_details(*args, **kwargs):
+    cursor = connection.cursor()
+    user_id = args[0]
+    plan_id = args[1]
+    strategy_id = args[2]
+    execution_time = args[3]
+    execution_desc = args[4]
+    remarks = args[5]
+
+    # 查找strategy对应得策略细则
+
+    # 根据细则频率信息，在policy_details表插入频率数据
+
+    cursor.execute(f"select count(*) num from users where user_id={user_id}")
+    pass
+
+
+class MakePolicyDetailsView(APIView):
+
+    @staticmethod
+    def get(request):
+        pass
+
+    @staticmethod
+    def post(request):
+        pass

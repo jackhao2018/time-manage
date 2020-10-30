@@ -13,7 +13,7 @@ class StrategysView(APIView):
     """
 
     @staticmethod
-    def get(request):
+    def get(request, *args, **kwargs):
         """
         默认查询与用户关联的说有策略，档model为1时，则查询收藏的策略
         :return:
@@ -32,13 +32,15 @@ class StrategysView(APIView):
             return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '请输入用户名！'})
 
     @staticmethod
-    def post(request):
+    def post(request, *args, **kwargs):
         data_dic = {
             'creator': request.POST.get('userId'),
             'strategy_name': request.POST.get('strategyName'),
             'strategy_details': request.POST.get('strategyDetails'),
             'remarks': request.POST.get('remarks'),
         }
+
+        # print(f'request包含的数据内容：{request.data}')
         try:
             serializer = StrategySerializer(data=data_dic)
             if serializer.is_valid(raise_exception=True):
@@ -47,3 +49,11 @@ class StrategysView(APIView):
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+        strategy_id = args[0]
+        Strategys.objects.filter(strategy_id=strategy_id).delete()
+        print('对象数据类型为：{}, 值为：{}'.format(type(Strategys.objects.filter(strategy_id=strategy_id).delete()), Strategys.objects.filter(strategy_id=strategy_id).delete()))
+
+        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})

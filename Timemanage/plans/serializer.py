@@ -1,16 +1,14 @@
 from rest_framework import serializers
-from .models import Plans
-import datetime
+from .models import Plans, PolicyDetails
+from datetime import date
 
-_CURRENT_TIME = datetime.datetime.now()
+_CURRENT_TIME = date.today()
 
 class PlanSerializer(serializers.ModelSerializer):
 
-    # user = serializers.IntegerField()
-    # user_id = serializers.IntegerField()
     plan_name = serializers.CharField(required=True, max_length=255)
-    begin_time = serializers.DateTimeField(required=True)
-    end_time = serializers.DateTimeField(required=True)
+    begin_time = serializers.DateField(required=True)
+    end_time = serializers.DateField(required=True)
 
     class Meta:
         model = Plans
@@ -18,16 +16,16 @@ class PlanSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_plan_name(data):
-        # print('data数据：{}'.format(data))
         if data is None:
             raise serializers.ValidationError('计划名不能为空')
         return data
 
     def validate(self, attrs):
         print(f'{attrs}')
-        current_time = attrs.get('current_time')
+        current_time = _CURRENT_TIME
         begin_time = attrs.get('begin_time')
         end_time = attrs.get('end_time')
+        print(f'三个格式分别是{type(current_time)}--{type(begin_time)}--{type(end_time)}')
 
         if current_time > begin_time:
             raise  serializers.ValidationError('计划开始时间不能小与当前时间')
@@ -38,7 +36,6 @@ class PlanSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         """数据校验成功时，为数据提供新增的方式"""
-        # plan_id = data.get('plan_id')
         plan_name = data.get('plan_name')
         current_time = _CURRENT_TIME
         begin_time = data.get('begin_time')
@@ -59,9 +56,7 @@ class PlanSerializer(serializers.ModelSerializer):
         """数据更新时，提供update操作"""
         strategy_id = data.get('strategy_id')
         user_id = data.get('user_id')
-        # plan_id = data.get('plan_id')
         plan_name = data.get('plan_name')
-        current_time = _CURRENT_TIME
         begin_time = data.get('begin_time')
         end_time = data.get('end_time')
         status = data.get('status')
@@ -70,7 +65,7 @@ class PlanSerializer(serializers.ModelSerializer):
         plan_type = data.get('plan_type')
 
         instance.plan_name = plan_name
-        instance.current_time = current_time
+        instance.current_time = _CURRENT_TIME
         instance.begin_time = begin_time
         instance.end_time = end_time
         instance.status = status
@@ -79,7 +74,60 @@ class PlanSerializer(serializers.ModelSerializer):
         instance.strategy_id = strategy_id
         instance.user_id = user_id
         instance.plan_type = plan_type
-        # instance.plan_id = plan_id
+
+        print(f'sql:信息222：{instance}')
+        instance.save()
+
+        return instance
+
+
+class PolicyDetailsSerializer(serializers.ModelSerializer):
+
+    strategy_id = serializers.IntegerField()
+    plan_id = serializers.IntegerField()
+
+    class Meta:
+        model = PolicyDetails
+        fields = '__all__'
+
+    @staticmethod
+    def validate_plan_id(data):
+        if data is None:
+            raise serializers.ValidationError('计划ID不能为空')
+        return data
+
+    def create(self, data):
+        """数据校验成功时，为数据提供新增的方式"""
+        strategy_id = data.get('strategy_id')
+        execution_time = data.get('execution_time')
+        remarks = data.get('remarks')
+        plan_id = data.get('plan_id')
+        execution_time_description = data.get('execution_time_description')
+        user_id = data.get('user_id')
+
+        instance = Plans.objects.create(user_id=user_id, strategy_id=strategy_id,
+                                        execution_time=execution_time, plan_id=plan_id,
+                                        execution_time_description=execution_time_description,
+                                        remarks=remarks
+                                        )
+        print(f'sql:信息：{instance}')
+        return instance
+
+    def update(self, instance, data):
+        """更新计划细节数据"""
+        strategy_id = data.get('strategy_id')
+        execution_time = data.get('execution_time')
+        remarks = data.get('remarks')
+        plan_id = data.get('plan_id')
+        execution_time_description = data.get('execution_time_description')
+        user_id = data.get('user_id')
+
+        instance.user_id = user_id
+        instance.plan_id = plan_id
+        instance.execution_time = execution_time
+        instance.strategy_id = strategy_id
+        instance.execution_time_description = execution_time_description
+        instance.remarks = remarks
 
         print(f'sql:信息222：{instance}')
         instance.save()

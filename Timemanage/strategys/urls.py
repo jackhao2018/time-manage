@@ -2,7 +2,7 @@ from django.urls import re_path
 from .views import StrategysView
 
 urlpatterns = [
-    re_path(r'^strategy/$', StrategysView.as_view()),
+    re_path(r'^strategy/([a-zA-Z0-9-]+)/$', StrategysView.as_view()),
     # re_path(r'^db/$', DatabaseChange.as_view()),
     # re_path(r'^shares/$', Shares.as_view()),
     # re_path(r'^capital/$', Capital.as_view()),

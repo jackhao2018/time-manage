@@ -7,15 +7,30 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-#todo:这里strateg数据库的字段是strategy来着，这里暂时改不了
+
+class PolicyDetails(models.Model):
+    user_id = models.ForeignKey(to='my.Users', to_field="user_id", on_delete=models.DO_NOTHING)
+    plan_id = models.ForeignKey('Plans', models.DO_NOTHING, db_column='user_id')
+    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING,
+                                    blank=True, null=True, db_column='strategy_id')
+    execution_time = models.DateField(blank=True, null=True)
+    execution_time_description = models.CharField(max_length=255, blank=True, null=True)
+    remarks = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'policy_details'
+
+
 class Plans(models.Model):
     plan_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(to='my.Users',to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id')
+    user_id = models.ForeignKey(to='my.Users', to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id')
     plan_name = models.CharField(max_length=255)
-    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING, blank=True, null=True, db_column='strategy_id')
-    current_time = models.DateTimeField()
-    begin_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING,
+                                    blank=True, null=True, db_column='strategy_id')
+    current_time = models.DateField()
+    begin_time = models.DateField()
+    end_time = models.DateField()
     status = models.IntegerField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
     level = models.IntegerField()
