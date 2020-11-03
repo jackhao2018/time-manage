@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Plans, PolicyDetails
 from datetime import date
+from strategys.models import Strategys
 
 _CURRENT_TIME = date.today()
 
@@ -83,8 +84,8 @@ class PlanSerializer(serializers.ModelSerializer):
 
 class PolicyDetailsSerializer(serializers.ModelSerializer):
 
-    strategy_id = serializers.IntegerField()
-    plan_id = serializers.IntegerField()
+    # strategy_id = serializers.IntegerField()
+    # plan_id = serializers.IntegerField()
 
     class Meta:
         model = PolicyDetails
@@ -98,14 +99,15 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         """数据校验成功时，为数据提供新增的方式"""
-        strategy_id = data.get('strategy_id')
+        print(f"strategy_id值为{ Strategys.objects.get(strategy_id=data.get('strategy_id'))}, 数据类型是：{type( Strategys.objects.get(strategy_id=data.get('strategy_id')))}")
+        strategy_id = Strategys.objects.get(strategy_id=data.get('strategy_id'))
         execution_time = data.get('execution_time')
         remarks = data.get('remarks')
         plan_id = data.get('plan_id')
         execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
 
-        instance = Plans.objects.create(user_id=user_id, strategy_id=strategy_id,
+        instance = PolicyDetails.objects.create(user_id=user_id, strategy_id=strategy_id,
                                         execution_time=execution_time, plan_id=plan_id,
                                         execution_time_description=execution_time_description,
                                         remarks=remarks
@@ -115,6 +117,9 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
 
     def update(self, instance, data):
         """更新计划细节数据"""
+        print(
+            f"strategy_id值为{Strategys.objects.get(strategy_id=data.get('strategy_id'))}, 数据类型是：{type(Strategys.objects.get(strategy_id=data.get('strategy_id')))}")
+
         strategy_id = data.get('strategy_id')
         execution_time = data.get('execution_time')
         remarks = data.get('remarks')

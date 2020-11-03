@@ -5,8 +5,9 @@ from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from .models import Plans
+from strategys.models import Strategys
 from common.decorator import check_user
-from .serializer import PlanSerializer
+from .serializer import PlanSerializer, PolicyDetailsSerializer
 from django.db import connection
 
 @method_decorator(check_user, name='dispatch')
@@ -28,7 +29,7 @@ class PlansView(APIView):
     @staticmethod
     def post(request, *args, **kwargs):
         data_dic = {
-        'user_id': request.GET.get('userId'),
+        'user_id': request.POST.get('userId'),
         'current_time': request.POST.get('currentTime'),
         'plan_name' : request.POST.get('planName'),
         'begin_time' : request.POST.get('beginTime'),
@@ -78,29 +79,73 @@ class PlansView(APIView):
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
 
 
-def make_policy_details(*args, **kwargs):
-    cursor = connection.cursor()
-    user_id = args[0]
-    plan_id = args[1]
-    strategy_id = args[2]
-    execution_time = args[3]
-    execution_desc = args[4]
-    remarks = args[5]
+# def make_policy_details(*args, **kwargs):
+#     cursor = connection.cursor()
+#     user_id = args[0]
+#     plan_id = args[1]
+#     strategy_id = args[2]
+#     execution_time = args[3]
+#     execution_desc = args[4]
+#     remarks = args[5]
+#
+#     # 查找strategy对应得策略细则
+#
+#     # 根据细则频率信息，在policy_details表插入频率数据
+#
+#     cursor.execute(f"select count(*) num from users where user_id={user_id}")
+#     pass
 
-    # 查找strategy对应得策略细则
-
-    # 根据细则频率信息，在policy_details表插入频率数据
-
-    cursor.execute(f"select count(*) num from users where user_id={user_id}")
-    pass
-
-
-class MakePolicyDetailsView(APIView):
+@method_decorator(check_user, name='dispatch')
+class PolicyDetailsView(APIView):
 
     @staticmethod
     def get(request):
         pass
 
     @staticmethod
-    def post(request):
-        pass
+    def post(request, *args, **kwargs):
+        data_dic = {
+            'user_id': request.POST.get('userId'),
+            'plan_id': request.POST.get('planId'),
+            'strategy_id': request.POST.get('strategyId'),
+            'execution_time': request.POST.get('executionTime'),
+            'execution_time_description': request.POST.get('description'),
+            'remarks': request.POST.get('remarks'),
+        }
+        strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=data_dic['strategy_id']) #  filter(strategy_id=data_dic['strategy_id'])[0]  # ('strategy_details').filter(0)  #  (strategy_id=data_dic['strategy_id'])
+        # print(f'strategy信息是:{strategy_details}--数据类别是：{type(strategy_details)}')
+        print(strategy_details[0]['strategy_details'])
+
+        # strategy_id = Strategys.objects.values('strategy_id').filter(strategy_id=data_dic['strategy_id'])
+
+        # strategy_id = Strategys.objects.get(strategy_id=1)
+        # 将返回信息的列表处理成列表
+        details_list = strategy_details[0]['strategy_details'].split(',')
+        print(details_list)
+        from datetime import date, timedelta
+
+        today = date.today()
+
+        for i in details_list :
+
+            d2 = today + timedelta(int(i))
+
+            print(d2)
+
+            data_dic['execution_time'] = d2.isoformat()
+
+            cursor = connection.cursor()
+            # print(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks) VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
+            cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
+
+        # data_dic['strategy_id'] = strategy_details # strategy_id.get('strategy_id')
+        #
+        #     print(data_dic)
+        #
+            # serializer = PolicyDetailsSerializer(data=data_dic)
+            #
+            # if serializer.is_valid(raise_exception=True):
+            #     serializer.save()
+
+        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': 'xixi'}, safe=False)
+        # 处理列表的细节，然后根据细节来操作policy_details表，生成对应的计划细则执行时间数据

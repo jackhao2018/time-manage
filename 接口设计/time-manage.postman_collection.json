@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "71bf79aa-6f86-4fba-865e-53d8993e056a",
+		"_postman_id": "8135addf-0053-402a-b851-ed9f2fb263d3",
 		"name": "time-manage",
 		"description": "调试接口\r\n\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -8,11 +8,34 @@
 	"item": [
 		{
 			"name": "新增策略",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8000/strategys/strategy/?userId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"strategys",
+						"strategy",
+						""
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "2"
+						}
+					]
 				},
 				"description": "新增策略"
 			},
@@ -26,6 +49,133 @@
 				"url": {
 					"raw": ""
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "我的计划",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "3",
+							"description": "用户号",
+							"type": "text"
+						},
+						{
+							"key": "planName",
+							"value": "测试request的请求内容",
+							"description": "计划名称",
+							"type": "text"
+						},
+						{
+							"key": "beginTime",
+							"value": "2020-10-30",
+							"type": "text"
+						},
+						{
+							"key": "endTime",
+							"value": "2020-10-30",
+							"type": "text"
+						},
+						{
+							"key": "remarks",
+							"value": "测试测试",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "0",
+							"description": "计划状态：0-待执行，1-执行中",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "1",
+							"description": "计划重要程度",
+							"type": "text"
+						},
+						{
+							"key": "planType",
+							"value": "1",
+							"description": "计划执行类型，1-单次执行",
+							"type": "text"
+						},
+						{
+							"key": "strategyId",
+							"value": "1",
+							"description": "策略ID",
+							"type": "text"
+						},
+						{
+							"key": "currentTime",
+							"value": "2020-10-28",
+							"type": "text"
+						},
+						{
+							"key": "planId",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/plans/plan/2/?userId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"plans",
+						"plan",
+						"2",
+						""
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						}
+					]
+				},
+				"description": "这里显示所有我创建过得计划"
+			},
+			"response": []
+		},
+		{
+			"name": "我的计划删除",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "planId",
+							"value": "2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/plans/plan/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"plans",
+						"plan",
+						""
+					]
+				},
+				"description": "这里显示所有我创建过得计划"
 			},
 			"response": []
 		}
