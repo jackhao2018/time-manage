@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from .models import Plans
+from .models import Plans, PolicyDetails
 from strategys.models import Strategys
 from common.decorator import check_user
 from .serializer import PlanSerializer, PolicyDetailsSerializer
@@ -79,31 +79,35 @@ class PlansView(APIView):
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
 
 
-# def make_policy_details(*args, **kwargs):
-#     cursor = connection.cursor()
-#     user_id = args[0]
-#     plan_id = args[1]
-#     strategy_id = args[2]
-#     execution_time = args[3]
-#     execution_desc = args[4]
-#     remarks = args[5]
-#
-#     # 查找strategy对应得策略细则
-#
-#     # 根据细则频率信息，在policy_details表插入频率数据
-#
-#     cursor.execute(f"select count(*) num from users where user_id={user_id}")
-#     pass
-
 @method_decorator(check_user, name='dispatch')
 class PolicyDetailsView(APIView):
 
     @staticmethod
-    def get(request):
-        pass
+    def get(request, *args, **kwargs):
+        user_id = request.GET.get('userId')
+        plan_id = request.GET.get('planId')
+        strategy_id = request.GET.get('strategyId')
 
+        try:
+            policy_details_info = PolicyDetails.objects.filter(user_id=user_id, strategy_id=strategy_id, plan_id=plan_id)
+            print(policy_details_info.query)
+            serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
+
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
+
+#todo:这里预期是希望使用Django原生的ORM，但是实际使用过程中处理外键关联时有好几处坑需要处理，所以现在暂时先使用原生的SQL完成业务
     @staticmethod
     def post(request, *args, **kwargs):
+        """
+        用于生成执行细节时间数据
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         data_dic = {
             'user_id': request.POST.get('userId'),
             'plan_id': request.POST.get('planId'),
@@ -112,16 +116,10 @@ class PolicyDetailsView(APIView):
             'execution_time_description': request.POST.get('description'),
             'remarks': request.POST.get('remarks'),
         }
-        strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=data_dic['strategy_id']) #  filter(strategy_id=data_dic['strategy_id'])[0]  # ('strategy_details').filter(0)  #  (strategy_id=data_dic['strategy_id'])
-        # print(f'strategy信息是:{strategy_details}--数据类别是：{type(strategy_details)}')
-        print(strategy_details[0]['strategy_details'])
+        strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=data_dic['strategy_id'])
 
-        # strategy_id = Strategys.objects.values('strategy_id').filter(strategy_id=data_dic['strategy_id'])
-
-        # strategy_id = Strategys.objects.get(strategy_id=1)
-        # 将返回信息的列表处理成列表
         details_list = strategy_details[0]['strategy_details'].split(',')
-        print(details_list)
+
         from datetime import date, timedelta
 
         today = date.today()
@@ -130,22 +128,16 @@ class PolicyDetailsView(APIView):
 
             d2 = today + timedelta(int(i))
 
-            print(d2)
-
             data_dic['execution_time'] = d2.isoformat()
 
             cursor = connection.cursor()
             # print(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks) VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
-            cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
+            try:
+                cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
+            except Exception as e:
+                return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+            else:
+                pass
 
-        # data_dic['strategy_id'] = strategy_details # strategy_id.get('strategy_id')
-        #
-        #     print(data_dic)
-        #
-            # serializer = PolicyDetailsSerializer(data=data_dic)
-            #
-            # if serializer.is_valid(raise_exception=True):
-            #     serializer.save()
+        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
-        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': 'xixi'}, safe=False)
-        # 处理列表的细节，然后根据细节来操作policy_details表，生成对应的计划细则执行时间数据
