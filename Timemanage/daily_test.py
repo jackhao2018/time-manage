@@ -1,3 +1,4 @@
+import py_compile
 
 test_data = '1,2,5,7,10,15,20,25,30'.split(',')
 print(test_data)
@@ -16,4 +17,8 @@ from datetime import date, timedelta
 
 today = date.today()
 d2 = today + timedelta(2)
-print(d2)
+# x = r"C:\Users\chenhao1_vendor\PycharmProjects\time-manage\Timemanage\daily_test.py"
+#
+# py_compile.compile(file=x, cfile=r"./test.pyc", optimize=-1)
+# # compileall.compile_dir()
+# print(d2)

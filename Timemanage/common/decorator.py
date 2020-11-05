@@ -1,6 +1,7 @@
 from django.db import connection
 from django.http import JsonResponse
 from rest_framework import status
+from django.http.multipartparser import MultiPartParser
 
 def check_user(fn):
     """由于策略表中的creator字段没有关联到users表,所以不存在的用户
@@ -8,8 +9,8 @@ def check_user(fn):
     """
     def _check(request, *args, **kwargs):
 
-        if request.method in ('POST', 'GET', 'PUT'):
-            user_id = request.POST.get('userId') if request.method == 'POST' else request.GET.get('userId')
+        if request.method in ('POST', 'GET'):
+            user_id = request.POST.get('userId') if request.method  == 'POST' else request.GET.get('userId') if request.method == 'GET' else MultiPartParser(request.META, request, request.upload_handlers).parse()[0]['userId']
 
             cursor = connection.cursor()
             try:

@@ -90,7 +90,7 @@ class PolicyDetailsView(APIView):
 
         try:
             policy_details_info = PolicyDetails.objects.filter(user_id=user_id, strategy_id=strategy_id, plan_id=plan_id)
-            print(policy_details_info.query)
+            # print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
         except Exception as e:
@@ -141,3 +141,25 @@ class PolicyDetailsView(APIView):
 
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
+    @staticmethod
+    def put(request, *args, **kwargs):
+        put = request.data
+        # print(data)
+        # put = MultiPartParser(request.META, request, request.upload_handlers).parse()[0]
+        data_dict = {'plan_id': put['planId'], 'user_id': put['userId'], 'execution_time_old': put['OldExecutionTime'], 'execution_time_new': put['NewExecutionTime'],
+                     'strategy_id': put['strategyId'], 'description': put['description'],
+                     'remarks':put['remarks']
+                     }
+        print(data_dict)
+        cursor = connection.cursor()
+        try:
+            # update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time'])
+            # serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
+            cursor.execute(f"UPDATE qianye.policy_details t SET t.execution_time_description = \'{data_dict['description']}\', t.remarks = \'{data_dict['remarks']}\', t.execution_time= \'{data_dict['execution_time_new']}\' WHERE t.user_id = \'{data_dict['user_id']}\' AND t.plan_id = \'{data_dict['plan_id']}\' AND t.strategy_id = \'{data_dict['strategy_id']}\' AND t.execution_time = \'{data_dict['execution_time_old']}\'")
+
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            # if serializer.is_valid(raise_exception=True):
+            #     serializer.save()
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': 'serializer.data'})

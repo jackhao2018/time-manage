@@ -9,9 +9,9 @@ from django.db import models
 
 
 class PolicyDetails(models.Model):
-    user = models.ForeignKey(to='my.Users', to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id', primary_key=True)
-    plan = models.ForeignKey('Plans',  on_delete=models.DO_NOTHING, db_column='plan_id')
-    strategy = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING,
+    user_id = models.ForeignKey(to='my.Users', to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id', primary_key=True)
+    plan_id = models.ForeignKey('Plans',  on_delete=models.DO_NOTHING, db_column='plan_id')
+    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING,
                                     blank=True, null=True, db_column='strategy_id')
     execution_time = models.DateField()
     execution_time_description = models.CharField(max_length=255, blank=True, null=True)
@@ -20,7 +20,7 @@ class PolicyDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'policy_details'
-        unique_together = (('user', 'plan', 'strategy', 'execution_time'),)
+        unique_together = (('user_id', 'plan_id', 'strategy_id', 'execution_time'),)
 
 
 
