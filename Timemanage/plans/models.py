@@ -9,10 +9,9 @@ from django.db import models
 
 
 class PolicyDetails(models.Model):
-    user_id = models.ForeignKey(to='my.Users', to_field="user_id", on_delete=models.DO_NOTHING, db_column='user_id', primary_key=True)
-    plan_id = models.ForeignKey('Plans',  on_delete=models.DO_NOTHING, db_column='plan_id')
-    strategy_id = models.ForeignKey(to='strategys.Strategys', to_field="strategy_id", on_delete=models.DO_NOTHING,
-                                    blank=True, null=True, db_column='strategy_id')
+    user_id = models.IntegerField(primary_key=True)
+    plan_id = models.IntegerField()
+    strategy_id = models.IntegerField(blank=True, null=True)
     execution_time = models.DateField()
     execution_time_description = models.CharField(max_length=255, blank=True, null=True)
     remarks = models.CharField(max_length=500, blank=True, null=True)

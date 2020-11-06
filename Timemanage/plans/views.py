@@ -38,7 +38,7 @@ class PlansView(APIView):
         'status' : request.POST.get('status'),
         'level' : request.POST.get('level'),
         'plan_type' : request.POST.get('plan_type'),
-        'strategy_id' : request.POST.get('strategyId') if request.POST.get('strategyId') is None else None
+        'strategy_id' : request.POST.get('strategyId') if request.POST.get('strategyId') else None
         }
         print(f'request.data包含的数据内容：{request.data}, request.query_params包含的数据内容：{request.query_params}')
         # data_dic_1 = request.data
@@ -113,7 +113,7 @@ class PolicyDetailsView(APIView):
             'plan_id': request.POST.get('planId'),
             'strategy_id': request.POST.get('strategyId'),
             'execution_time': request.POST.get('executionTime'),
-            'execution_time_description': request.POST.get('description'),
+            'description': request.POST.get('description'),
             'remarks': request.POST.get('remarks'),
         }
         strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=data_dic['strategy_id'])
@@ -133,7 +133,7 @@ class PolicyDetailsView(APIView):
             cursor = connection.cursor()
             # print(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks) VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
             try:
-                cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
+                cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '{data_dic['description']}', '{data_dic['remarks']}')")
             except Exception as e:
                 return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
             else:
@@ -151,15 +151,42 @@ class PolicyDetailsView(APIView):
                      'remarks':put['remarks']
                      }
         print(data_dict)
-        cursor = connection.cursor()
+        # cursor = connection.cursor()
         try:
-            # update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time'])
-            # serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
-            cursor.execute(f"UPDATE qianye.policy_details t SET t.execution_time_description = \'{data_dict['description']}\', t.remarks = \'{data_dict['remarks']}\', t.execution_time= \'{data_dict['execution_time_new']}\' WHERE t.user_id = \'{data_dict['user_id']}\' AND t.plan_id = \'{data_dict['plan_id']}\' AND t.strategy_id = \'{data_dict['strategy_id']}\' AND t.execution_time = \'{data_dict['execution_time_old']}\'")
+            update_obj = PolicyDetails.objects.filter(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time_old'])
+            print(update_obj.query)
+            del data_dict['execution_time_old']
+            data_dict['execution_time'] = data_dict['execution_time_new']
+            del data_dict['execution_time_new']
+            print(data_dict)
+
+            serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
+
+            # cursor.execute(f"UPDATE qianye.policy_details t SET t.execution_time_description = \'{data_dict['description']}\', t.remarks = \'{data_dict['remarks']}\', t.execution_time= \'{data_dict['execution_time_new']}\' WHERE t.user_id = \'{data_dict['user_id']}\' AND t.plan_id = \'{data_dict['plan_id']}\' AND t.strategy_id = \'{data_dict['strategy_id']}\' AND t.execution_time = \'{data_dict['execution_time_old']}\'")
 
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            # if serializer.is_valid(raise_exception=True):
-            #     serializer.save()
-            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': 'serializer.data'})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': serializer.data})
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+        put = request.data
+        data_dict = {'plan_id': put['planId'], 'user_id': put['userId'], 'execution_time': put['executionTime'],
+                     'strategy_id': put['strategyId']
+                     }
+        print(data_dict)
+
+        cursor = connection.cursor()
+        try:
+            # update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time'])
+            # serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
+            cursor.execute(
+                f"DELETE FROM qianye.policy_details WHERE user_id = \'{data_dict['user_id']}\' AND plan_id = \'{data_dict['plan_id']}\' AND strategy_id = \'{data_dict['strategy_id']}\' AND execution_time = \'{data_dict['execution_time']}\'")
+
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code':status.HTTP_200_OK})

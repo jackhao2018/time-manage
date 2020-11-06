@@ -104,7 +104,7 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         execution_time = data.get('execution_time')
         remarks = data.get('remarks')
         plan_id = data.get('plan_id')
-        execution_time_description = data.get('execution_time_description')
+        execution_time_description = data.get('description')
         user_id = data.get('user_id')
 
         instance = PolicyDetails.objects.create(user_id=user_id, strategy_id=strategy_id,
@@ -112,14 +112,10 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
                                         execution_time_description=execution_time_description,
                                         remarks=remarks
                                         )
-        print(f'sql:信息：{instance}')
         return instance
 
     def update(self, instance, data):
         """更新计划细节数据"""
-        # print(
-        #     f"strategy_id值为{Strategys.objects.get(strategy_id=data.get('strategy_id'))}, 数据类型是：{type(Strategys.objects.get(strategy_id=data.get('strategy_id')))}")
-
         strategy_id = data.get('strategy_id')
         execution_time = data.get('execution_time')
         remarks = data.get('remarks')
@@ -133,8 +129,6 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         instance.strategy_id = strategy_id
         instance.execution_time_description = execution_time_description
         instance.remarks = remarks
-
-        print(f'sql:信息222：{instance}')
         instance.save()
 
         return instance
