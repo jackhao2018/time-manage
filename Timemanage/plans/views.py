@@ -147,20 +147,21 @@ class PolicyDetailsView(APIView):
         # print(data)
         # put = MultiPartParser(request.META, request, request.upload_handlers).parse()[0]
         data_dict = {'plan_id': put['planId'], 'user_id': put['userId'], 'execution_time_old': put['OldExecutionTime'], 'execution_time_new': put['NewExecutionTime'],
-                     'strategy_id': put['strategyId'], 'description': put['description'],
-                     'remarks':put['remarks']
+                     'strategy_id': put['strategyId'], 'execution_time_description': put['description'],
+                     'remarks':put['remarks'],'id':put['id']
                      }
         print(data_dict)
         # cursor = connection.cursor()
         try:
-            update_obj = PolicyDetails.objects.filter(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time_old'])
-            print(update_obj.query)
+            update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time_old'])
+            # print(update_obj.query)
             del data_dict['execution_time_old']
             data_dict['execution_time'] = data_dict['execution_time_new']
             del data_dict['execution_time_new']
-            print(data_dict)
 
-            serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
+            # print(f'此时的data_dic数据内容是：{data_dict}')
+
+            serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)
 
             # cursor.execute(f"UPDATE qianye.policy_details t SET t.execution_time_description = \'{data_dict['description']}\', t.remarks = \'{data_dict['remarks']}\', t.execution_time= \'{data_dict['execution_time_new']}\' WHERE t.user_id = \'{data_dict['user_id']}\' AND t.plan_id = \'{data_dict['plan_id']}\' AND t.strategy_id = \'{data_dict['strategy_id']}\' AND t.execution_time = \'{data_dict['execution_time_old']}\'")
 

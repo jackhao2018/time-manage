@@ -9,17 +9,17 @@ from django.db import models
 
 
 class PolicyDetails(models.Model):
-    user_id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     plan_id = models.IntegerField()
-    strategy_id = models.IntegerField(blank=True, null=True)
+    strategy_id = models.IntegerField()
     execution_time = models.DateField()
     execution_time_description = models.CharField(max_length=255, blank=True, null=True)
     remarks = models.CharField(max_length=500, blank=True, null=True)
+    user_id = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'policy_details'
-        unique_together = (('user_id', 'plan_id', 'strategy_id', 'execution_time'),)
 
 
 
