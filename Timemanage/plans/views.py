@@ -60,9 +60,13 @@ class PlansView(APIView):
     @staticmethod
     def delete(request, *args, **kwargs):  # 删除操作
 
-        plan_id = args[0]
-        Plans.objects.filter(plan_id=plan_id).delete()
-        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
+        plan_id = request.data['plan_id']
+        try:
+            Plans.objects.get(plan_id=plan_id).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
 
 
 @method_decorator(check_user, name='dispatch')
@@ -84,7 +88,6 @@ class PolicyDetailsView(APIView):
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
 
-#todo:这里预期是希望使用Django原生的ORM，但是实际使用过程中处理外键关联时有好几处坑需要处理，所以现在暂时先使用原生的SQL完成业务
     @staticmethod
     def post(request, *args, **kwargs):
         """
@@ -140,8 +143,6 @@ class PolicyDetailsView(APIView):
     def put(request, *args, **kwargs):
         data_dict = request.data
 
-        print(data_dict)
-
         try:
             update_obj = PolicyDetails.objects.get(detail_id=data_dict['detail_id'])
 
@@ -154,22 +155,16 @@ class PolicyDetailsView(APIView):
                 serializer.save()
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': serializer.data})
 
+#TODO:删除部分，还需要个批量删除的接口
     @staticmethod
     def delete(request, *args, **kwargs):
-        put = request.data
-        data_dict = {'plan_id': put['planId'], 'user_id': put['userId'], 'execution_time': put['executionTime'],
-                     'strategy_id': put['strategyId']
-                     }
-        print(data_dict)
 
-        cursor = connection.cursor()
+        detail_id = request.data['detail_id']
+
         try:
-            # update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time'])
-            # serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)  # ValueError: Cannot assign "1": "PolicyDetails.user_id" must be a "Users" instance.
-            cursor.execute(
-                f"DELETE FROM qianye.policy_details WHERE user_id = \'{data_dict['user_id']}\' AND plan_id = \'{data_dict['plan_id']}\' AND strategy_id = \'{data_dict['strategy_id']}\' AND execution_time = \'{data_dict['execution_time']}\'")
+            PolicyDetails.objects.get(detail_id=detail_id).delete()
 
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            return JsonResponse({'code':status.HTTP_200_OK})
+            return JsonResponse({'code':status.HTTP_200_OK, 'msg': '成功删除对应的细则'})
