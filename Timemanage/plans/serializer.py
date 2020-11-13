@@ -13,7 +13,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plans
-        fields = '__all__'
+        fields = ('plan_id' ,'user_id', 'strategy_id', 'plan_name', 'plan_type','begin_time', 'end_time', 'status', 'remarks', 'level')
 
     @staticmethod
     def validate_plan_name(data):
@@ -22,11 +22,10 @@ class PlanSerializer(serializers.ModelSerializer):
         return data
 
     def validate(self, attrs):
-        print(f'{attrs}')
+
         current_time = _CURRENT_TIME
         begin_time = attrs.get('begin_time')
         end_time = attrs.get('end_time')
-        print(f'三个格式分别是{type(current_time)}--{type(begin_time)}--{type(end_time)}')
 
         if current_time > begin_time:
             raise  serializers.ValidationError('计划开始时间不能小与当前时间')
@@ -76,7 +75,6 @@ class PlanSerializer(serializers.ModelSerializer):
         instance.user_id = user_id
         instance.plan_type = plan_type
 
-        print(f'sql:信息222：{instance}')
         instance.save()
 
         return instance
@@ -99,19 +97,18 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         """数据校验成功时，为数据提供新增的方式"""
-        # print(f"strategy_id值为{ Strategys.objects.get(strategy_id=data.get('strategy_id'))}, 数据类型是：{type( Strategys.objects.get(strategy_id=data.get('strategy_id')))}")
+
         strategy_id = data.get('strategy_id')
         execution_time = data.get('execution_time')
         remarks = data.get('remarks')
         plan_id = data.get('plan_id')
-        execution_time_description = data.get('description')
+        execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
 
         instance = PolicyDetails.objects.create(user_id=user_id, strategy_id=strategy_id,
                                         execution_time=execution_time, plan_id=plan_id,
                                         execution_time_description=execution_time_description,
-                                        remarks=remarks
-                                        )
+                                        remarks=remarks)
         return instance
 
     def update(self, instance, data):
@@ -122,15 +119,15 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         plan_id = data.get('plan_id')
         execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
-        id = data.get('id')
+        detail_id = data.get('detail_id')
 
-        instance.id = id
+        instance.id = detail_id
         instance.user_id = user_id
         instance.plan_id = plan_id
-        instance.execution_time = execution_time
         instance.strategy_id = strategy_id
+        instance.execution_time = execution_time
         instance.execution_time_description = execution_time_description
         instance.remarks = remarks
-        instance.save()
 
+        instance.save()
         return instance

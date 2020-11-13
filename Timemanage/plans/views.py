@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http.multipartparser import MultiPartParser
 from django.utils.decorators import method_decorator
 from rest_framework import status
@@ -15,7 +14,7 @@ class PlansView(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        user_id = request.GET.get('userId')
+        user_id = request.GET.get('user_id')
 
         try:
             plan_info = Plans.objects.filter(user_id=user_id)
@@ -28,20 +27,9 @@ class PlansView(APIView):
 
     @staticmethod
     def post(request, *args, **kwargs):
-        data_dic = {
-        'user_id': request.POST.get('userId'),
-        'current_time': request.POST.get('currentTime'),
-        'plan_name' : request.POST.get('planName'),
-        'begin_time' : request.POST.get('beginTime'),
-        'end_time' : request.POST.get('endTime'),
-        'remarks' : request.POST.get('remarks'),
-        'status' : request.POST.get('status'),
-        'level' : request.POST.get('level'),
-        'plan_type' : request.POST.get('plan_type'),
-        'strategy_id' : request.POST.get('strategyId') if request.POST.get('strategyId') else None
-        }
-        print(f'request.data包含的数据内容：{request.data}, request.query_params包含的数据内容：{request.query_params}')
-        # data_dic_1 = request.data
+
+        data_dic = request.data
+
         try:
             serializer = PlanSerializer(data=data_dic)
 
@@ -54,12 +42,9 @@ class PlansView(APIView):
 
     @staticmethod
     def put(request, *args, **kwargs):
-        put = MultiPartParser(request.META, request, request.upload_handlers).parse()
-        data_dict = {'plan_id': put[0]['planId'], 'user_id': put[0]['userId'], 'plan_name': put[0]['planName'],
-                     'strategy_id': put[0]['strategyId'], 'current_time': put[0]['currentTime'], 'begin_time': put[0]['beginTime'],
-                     'end_time': put[0]['endTime'], 'status': put[0]['status'], 'remarks': put[0]['remarks'],
-                     'level': put[0]['level'], 'plan_type': put[0]['planType']
-                     }
+
+        data_dict = request.data
+
         try:
             update_obj = Plans.objects.get(plan_id=data_dict['plan_id'])
             serializer = PlanSerializer(instance=update_obj, data=data_dict)
@@ -74,6 +59,7 @@ class PlansView(APIView):
 #TODO:删除计划时，应该还要回显删除的计划名，后台只负责删除对应的计划，计划名由前端处理，获取后台的格式然后填充当前的计划名
     @staticmethod
     def delete(request, *args, **kwargs):  # 删除操作
+
         plan_id = args[0]
         Plans.objects.filter(plan_id=plan_id).delete()
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
@@ -108,15 +94,23 @@ class PolicyDetailsView(APIView):
         :param kwargs:
         :return:
         """
-        data_dic = {
-            'user_id': request.POST.get('userId'),
-            'plan_id': request.POST.get('planId'),
-            'strategy_id': request.POST.get('strategyId'),
-            'execution_time': request.POST.get('executionTime'),
-            'description': request.POST.get('description'),
-            'remarks': request.POST.get('remarks'),
-        }
-        strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=data_dic['strategy_id'])
+        request.POST._mutable = True
+        # data = request
+        # print(data)
+        # print(data.data)
+        # data_dic = {
+        #     'user_id': request.POST.get('userId'),
+        #     'plan_id': request.POST.get('planId'),
+        #     'strategy_id': request.POST.get('strategyId'),
+        #     'execution_time': request.POST.get('executionTime'),
+        #     'description': request.POST.get('description'),
+        #     'remarks': request.POST.get('remarks'),
+        # }
+        data_dic = request.data
+
+        print(data_dic)
+
+        strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=request.data['strategy_id'])
 
         details_list = strategy_details[0]['strategy_details'].split(',')
 
@@ -130,40 +124,28 @@ class PolicyDetailsView(APIView):
 
             data_dic['execution_time'] = d2.isoformat()
 
-            cursor = connection.cursor()
-            # print(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks) VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '不说', ' 测试')")
             try:
-                cursor.execute(f"INSERT INTO qianye.policy_details (user_id, plan_id, strategy_id, execution_time, execution_time_description, remarks)  VALUES ({data_dic['user_id']}, {data_dic['plan_id']}, {data_dic['strategy_id']}, '{data_dic['execution_time']}', '{data_dic['description']}', '{data_dic['remarks']}')")
+                serializer = PolicyDetailsSerializer(data=data_dic)
+
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+
             except Exception as e:
                 return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
             else:
                 pass
-
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
     @staticmethod
     def put(request, *args, **kwargs):
-        put = request.data
-        # print(data)
-        # put = MultiPartParser(request.META, request, request.upload_handlers).parse()[0]
-        data_dict = {'plan_id': put['planId'], 'user_id': put['userId'], 'execution_time_old': put['OldExecutionTime'], 'execution_time_new': put['NewExecutionTime'],
-                     'strategy_id': put['strategyId'], 'execution_time_description': put['description'],
-                     'remarks':put['remarks'],'id':put['id']
-                     }
-        print(data_dict)
-        # cursor = connection.cursor()
-        try:
-            update_obj = PolicyDetails.objects.get(plan_id=data_dict['plan_id'], user_id=data_dict['user_id'], strategy_id=data_dict['strategy_id'], execution_time=data_dict['execution_time_old'])
-            # print(update_obj.query)
-            del data_dict['execution_time_old']
-            data_dict['execution_time'] = data_dict['execution_time_new']
-            del data_dict['execution_time_new']
+        data_dict = request.data
 
-            # print(f'此时的data_dic数据内容是：{data_dict}')
+        print(data_dict)
+
+        try:
+            update_obj = PolicyDetails.objects.get(detail_id=data_dict['detail_id'])
 
             serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)
-
-            # cursor.execute(f"UPDATE qianye.policy_details t SET t.execution_time_description = \'{data_dict['description']}\', t.remarks = \'{data_dict['remarks']}\', t.execution_time= \'{data_dict['execution_time_new']}\' WHERE t.user_id = \'{data_dict['user_id']}\' AND t.plan_id = \'{data_dict['plan_id']}\' AND t.strategy_id = \'{data_dict['strategy_id']}\' AND t.execution_time = \'{data_dict['execution_time_old']}\'")
 
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})

@@ -10,7 +10,7 @@ def check_user(fn):
     def _check(request, *args, **kwargs):
 
         if request.method in ('POST', 'GET'):
-            user_id = request.POST.get('userId') if request.method  == 'POST' else request.GET.get('userId') if request.method == 'GET' else MultiPartParser(request.META, request, request.upload_handlers).parse()[0]['userId']
+            user_id = request.POST.get('user_id') if request.method  == 'POST' else request.GET.get('user_id') if request.method == 'GET' else MultiPartParser(request.META, request, request.upload_handlers).parse()[0]['user_id']
 
             cursor = connection.cursor()
             try:

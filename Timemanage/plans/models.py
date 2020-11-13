@@ -9,7 +9,7 @@ from django.db import models
 
 
 class PolicyDetails(models.Model):
-    id = models.IntegerField(primary_key=True)
+    detail_id = models.AutoField(primary_key=True)
     plan_id = models.IntegerField()
     strategy_id = models.IntegerField()
     execution_time = models.DateField()
