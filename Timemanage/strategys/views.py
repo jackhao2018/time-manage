@@ -18,29 +18,25 @@ class StrategysView(APIView):
         默认查询与用户关联的说有策略，档model为1时，则查询收藏的策略
         :return:
         """
-        user_id = request.GET.get('userId')
-        # print(f'user_id的值是：{user_id}，数据类型是{type(user_id)}')
-        if user_id is not None:
-            try:
-                strategy_info = Strategys.objects.filter(creator=user_id)
-                serializer = StrategySerializer(instance=strategy_info, many=True)
-            except Exception as e:
-                return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
-            else:
-                return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
+        creator = request.GET.get('user_id')
+
+        try:
+            strategy_info = Strategys.objects.filter(creator=creator)
+            serializer = StrategySerializer(instance=strategy_info, many=True)
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            return JsonResponse({'code': status.HTTP_204_NO_CONTENT, 'err_msg': '请输入用户名！'})
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data}, safe=False)
 
     @staticmethod
     def post(request, *args, **kwargs):
-        data_dic = {
-            'creator': request.POST.get('userId'),
-            'strategy_name': request.POST.get('strategyName'),
-            'strategy_details': request.POST.get('strategyDetails'),
-            'remarks': request.POST.get('remarks'),
-        }
 
-        # print(f'request包含的数据内容：{request.data}')
+        request.POST._mutable = True
+
+        data_dic = request.data
+        data_dic['creator'] = data_dic['user_id']
+        del data_dic['user_id']
+
         try:
             serializer = StrategySerializer(data=data_dic)
             if serializer.is_valid(raise_exception=True):
@@ -51,9 +47,17 @@ class StrategysView(APIView):
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
 
     @staticmethod
-    def delete(request, *args, **kwargs):
-        strategy_id = args[0]
-        Strategys.objects.filter(strategy_id=strategy_id).delete()
-        print('对象数据类型为：{}, 值为：{}'.format(type(Strategys.objects.filter(strategy_id=strategy_id).delete()), Strategys.objects.filter(strategy_id=strategy_id).delete()))
+    def put(request):
+        pass
 
-        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})
+    @staticmethod
+    def delete(request, *args, **kwargs):
+
+        strategy_id = request.data['strategy_id']
+        print(strategy_id)
+        try:
+            Strategys.objects.filter(strategy_id=strategy_id).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})

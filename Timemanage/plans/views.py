@@ -1,4 +1,3 @@
-from django.http.multipartparser import MultiPartParser
 from django.utils.decorators import method_decorator
 from rest_framework import status
 from django.http import JsonResponse
@@ -7,7 +6,6 @@ from .models import Plans, PolicyDetails
 from strategys.models import Strategys
 from common.decorator import check_user
 from .serializer import PlanSerializer, PolicyDetailsSerializer
-from django.db import connection
 
 @method_decorator(check_user, name='dispatch')
 class PlansView(APIView):
@@ -80,7 +78,6 @@ class PolicyDetailsView(APIView):
 
         try:
             policy_details_info = PolicyDetails.objects.filter(user_id=user_id, strategy_id=strategy_id, plan_id=plan_id)
-            # print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
         except Exception as e:
@@ -97,21 +94,9 @@ class PolicyDetailsView(APIView):
         :param kwargs:
         :return:
         """
-        request.POST._mutable = True
-        # data = request
-        # print(data)
-        # print(data.data)
-        # data_dic = {
-        #     'user_id': request.POST.get('userId'),
-        #     'plan_id': request.POST.get('planId'),
-        #     'strategy_id': request.POST.get('strategyId'),
-        #     'execution_time': request.POST.get('executionTime'),
-        #     'description': request.POST.get('description'),
-        #     'remarks': request.POST.get('remarks'),
-        # }
-        data_dic = request.data
+        request.POST._mutable = True   # 设置request对象可以改动
 
-        print(data_dic)
+        data_dic = request.data
 
         strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=request.data['strategy_id'])
 
@@ -130,13 +115,11 @@ class PolicyDetailsView(APIView):
             try:
                 serializer = PolicyDetailsSerializer(data=data_dic)
 
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
-
             except Exception as e:
                 return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
             else:
-                pass
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
         return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
     @staticmethod
