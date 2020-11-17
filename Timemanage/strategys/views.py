@@ -47,8 +47,25 @@ class StrategysView(APIView):
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
 
     @staticmethod
-    def put(request):
-        pass
+    def put(request, *args, **kwargs):
+
+        request.POST._mutable = True
+
+        data_dic = request.data
+
+        data_dic['creator'] = data_dic['user_id']
+        del data_dic['user_id']
+
+        try:
+            strategy_info = Strategys.objects.get(strategy_id=data_dic['strategy_id'])
+
+            serializer = StrategySerializer(instance=strategy_info, data=data_dic)
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': serializer.data})
 
     @staticmethod
     def delete(request, *args, **kwargs):
@@ -56,7 +73,19 @@ class StrategysView(APIView):
         strategy_id = request.data['strategy_id']
         print(strategy_id)
         try:
-            Strategys.objects.filter(strategy_id=strategy_id).delete()
+            Strategys.objects.get(strategy_id=strategy_id).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})
+
+class MDstrategyView(APIView):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        del_list = request.data['strategy_id'].split(',')
+        try:
+            Strategys.objects.filter(strategy_id__in=del_list).delete()
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:

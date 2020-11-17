@@ -41,16 +41,16 @@ class StrategySerializer(serializers.ModelSerializer):
         user_id = data.get('creator')
         strategy_details = data.get('strategy_details')
         remarks = data.get('remarks')
-        print('入参数据分别是：{}，{}，{}，{}'.format(user_id, strategy_name, strategy_details, remarks))
         instance = Strategys.objects.create(creator=user_id, strategy_name=strategy_name, strategy_details=strategy_details, remarks=remarks)
         return instance
 
-    def update(self, instance, validated_data):
+    def update(self, instance, data):
         """数据更新时，提供update操作"""
-        creator = validated_data.get('creator')
-        strategy_name = validated_data.get('strategy_name')
-        strategy_details = validated_data.get('strategy_details')
-        remarks = validated_data.get('remarks')
+        creator = data.get('creator')
+        strategy_name = data.get('strategy_name')
+        strategy_details = data.get('strategy_details')
+        remarks = data.get('remarks')
+
         instance.creator = creator
         instance.strategy_name = strategy_name
         instance.strategy_details = strategy_details

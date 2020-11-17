@@ -119,9 +119,7 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         plan_id = data.get('plan_id')
         execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
-        detail_id = data.get('detail_id')
 
-        instance.id = detail_id
         instance.user_id = user_id
         instance.plan_id = plan_id
         instance.strategy_id = strategy_id
