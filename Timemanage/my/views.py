@@ -5,6 +5,7 @@ from django.db import connection
 from django.utils.decorators import method_decorator
 from common.decorator import check_user
 from .serializer import CollectSerializer
+from .models import Collects
 
 @method_decorator(check_user, name='dispatch')
 class CollectView(APIView):
@@ -40,3 +41,19 @@ class CollectView(APIView):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+
+        user_id = request.data.get('user_id')
+        strategy_id = request.data.get('strategy_id')
+
+        try:
+            Collects.objects.get(user_id=user_id, strategy_id=strategy_id).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '删除收藏成功！！！'})
+
+class MDcollectView(APIView):
+    pass

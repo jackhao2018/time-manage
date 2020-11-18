@@ -9,7 +9,7 @@ class CollectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collects
-        fields = '__all__'
+        fields = ('user_id', 'strategy_id')
 
     # 这里定义策略新增时用到的额create方法
     def create(self, validated_data):

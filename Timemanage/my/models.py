@@ -22,8 +22,9 @@ class Users(models.Model):
 
 
 class Collects(models.Model):
-    strategy_id = models.IntegerField()
+    collect_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
+    strategy_id = models.IntegerField()
 
     class Meta:
         managed = False
