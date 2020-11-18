@@ -22,9 +22,10 @@ class Users(models.Model):
 
 
 class Collects(models.Model):
-    user = models.ForeignKey(Users, models.DO_NOTHING)
-    strategy = models.OneToOneField(to='strategys.Strategys', on_delete=models.DO_NOTHING, primary_key=True)
+    strategy_id = models.IntegerField()
+    user_id = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'collects'
+        unique_together = (('user_id', 'strategy_id'),)

@@ -23,8 +23,10 @@ class CollectSerializer(serializers.ModelSerializer):
         """数据更新时，提供update操作"""
         strategy_id = validated_data.get('strategy_id')
         user_id = validated_data.get('user_id')
+
         instance.strategy_id = strategy_id
         instance.user_id = user_id
+
         instance.save()
         return instance
 

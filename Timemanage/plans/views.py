@@ -138,7 +138,6 @@ class PolicyDetailsView(APIView):
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '执行细节更新成功', 'saveinfo': serializer.data})
 
-#TODO:删除部分，还需要个批量删除的接口
     @staticmethod
     def delete(request, *args, **kwargs):
 
@@ -152,15 +151,14 @@ class PolicyDetailsView(APIView):
         else:
             return JsonResponse({'code':status.HTTP_200_OK, 'msg': '成功删除对应的细则'})
 
-@method_decorator(check_user, name='dispatch')
+
 class MDPlanView(APIView):
 
-    @staticmethod
-    def post(request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         del_list = request.data['plan_id'].split(',')
         try:
             Plans.objects.filter(plan_id__in=del_list).delete()
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})

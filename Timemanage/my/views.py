@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.db import connection
 from django.utils.decorators import method_decorator
 from common.decorator import check_user
+from .serializer import CollectSerializer
 
 @method_decorator(check_user, name='dispatch')
 class CollectView(APIView):
@@ -13,21 +14,10 @@ class CollectView(APIView):
     @staticmethod
     def get(request):
         """查询我收藏的策略"""
-        _SQL = """SELECT
-	A.strategy_id,
-	C.user_name,
-	B.strategy_name,
-	B.strategy_details,
-	B.remarks 
-FROM
-	collects A,
-	strategys B,
-	users C 
-WHERE
-	A.strategy_id = B.strategy_id 
-	AND A.user_id = {} 
-	AND B.creator = C.user_id"""
-        user_id = request.GET.get('userId')
+        _SQL = """select a.strategy_id, c.user_name, b.strategy_name, b.strategy_details, b.remarks from collects a, 
+        strategys b, users c WHERE a.user_id=c.user_id and a.strategy_id=b.strategy_id and a.user_id={}"""
+
+        user_id = request.GET.get('user_id')
 
         try:
             cursor = connection.cursor()
@@ -38,5 +28,15 @@ WHERE
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': data}, safe=False)
 
-    def post(self):
-        pass
+    @staticmethod
+    def post(request, *args, **kwargs):
+        data_dic = request.data
+
+        try:
+            serializer = CollectSerializer(data=data_dic)
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功', 'result': serializer.data})

@@ -8,4 +8,11 @@
 from django.db import models
 
 
+class Collects(models.Model):
+    strategy_id = models.IntegerField()
+    user_id = models.IntegerField()
 
+    class Meta:
+        managed = False
+        db_table = 'collects'
+        unique_together = (('user_id', 'strategy_id'),)
