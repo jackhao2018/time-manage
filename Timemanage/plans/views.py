@@ -72,12 +72,13 @@ class PolicyDetailsView(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        user_id = request.GET.get('userId')
-        plan_id = request.GET.get('planId')
-        strategy_id = request.GET.get('strategyId')
+        user_id = request.GET.get('user_id')
+        plan_id = request.GET.get('plan_id')
+        strategy_id = request.GET.get('strategy_id')
 
         try:
             policy_details_info = PolicyDetails.objects.filter(user_id=user_id, strategy_id=strategy_id, plan_id=plan_id)
+            print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
         except Exception as e:
@@ -154,7 +155,8 @@ class PolicyDetailsView(APIView):
 
 class MDPlanView(APIView):
 
-    def post(self, request, *args, **kwargs):
+    @staticmethod
+    def post(request, *args, **kwargs):
         del_list = request.data['plan_id'].split(',')
         try:
             Plans.objects.filter(plan_id__in=del_list).delete()

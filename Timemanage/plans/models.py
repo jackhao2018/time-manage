@@ -20,6 +20,7 @@ class PolicyDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'policy_details'
+        unique_together = (('user_id', 'plan_id', 'strategy_id'),)
 
 
 

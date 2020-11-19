@@ -8,12 +8,16 @@
 from django.db import models
 
 
-class Collects(models.Model):
-    collect_id = models.AutoField(primary_key=True)
-    user_id = models.IntegerField()
+class PolicyDetails(models.Model):
+    detail_id = models.AutoField(primary_key=True)
+    plan_id = models.IntegerField()
     strategy_id = models.IntegerField()
+    execution_time = models.DateField()
+    execution_time_description = models.CharField(max_length=255, blank=True, null=True)
+    remarks = models.CharField(max_length=500, blank=True, null=True)
+    user_id = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'collects'
-        unique_together = (('user_id', 'strategy_id'),)
+        db_table = 'policy_details'
+        unique_together = (('user_id', 'plan_id', 'strategy_id'),)

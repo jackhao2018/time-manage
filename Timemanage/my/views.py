@@ -55,5 +55,15 @@ class CollectView(APIView):
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '删除收藏成功！！！'})
 
+
 class MDcollectView(APIView):
-    pass
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        del_list = request.data['collect_id'].split(',')
+        try:
+            Collects.objects.filter(collect_id__in=del_list).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
