@@ -164,3 +164,16 @@ class MDPlanView(APIView):
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
+
+
+class MDDetailsView(APIView):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        del_list = request.data['details_id'].split(',')
+        try:
+            PolicyDetails.objects.filter(detail_id__in=del_list).delete()
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+        else:
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
