@@ -95,6 +95,17 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('计划ID不能为空')
         return data
 
+    def validate(self, attrs):
+
+        current_time = _CURRENT_TIME
+        execution_time = attrs.get('execution_time')
+
+        if current_time > execution_time:
+            raise  serializers.ValidationError('执行时间不能小于当前时间')
+        # elif begin_time > end_time:
+        #     raise serializers.ValidationError('计划结束时间不能小与开始时间')
+        return attrs
+
     def create(self, data):
         """数据校验成功时，为数据提供新增的方式"""
 

@@ -1,6 +1,7 @@
 from django.db import connection
 from django.http import JsonResponse
 from rest_framework import status
+from my.models import Users
 from django.http.multipartparser import MultiPartParser
 
 def check_user(fn):
@@ -9,21 +10,16 @@ def check_user(fn):
     """
     def _check(request, *args, **kwargs):
 
-        if request.method in ('POST', 'GET'):
-            user_id = request.POST.get('user_id') if request.method  == 'POST' else request.GET.get('user_id') if request.method == 'GET' else MultiPartParser(request.META, request, request.upload_handlers).parse()[0]['user_id']
+        if request.method in ('GET', 'POST'):
+            user_id = request.GET.get('user_id') if request.method == 'GET' else request.POST.get('user_id')
+        else:
+            user_id = MultiPartParser(request.META, request, request.upload_handlers).parse()[0]['user_id']
 
-            cursor = connection.cursor()
-            try:
-                cursor.execute(f"select count(*) num from users where user_id={user_id}")
-            except Exception as e:
-                return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
-            else:
-                user_info = cursor.fetchall()
-
-            if user_info[0][0]:
-                return fn(request, *args, **kwargs)
-            else:
-                return JsonResponse({'code': status.HTTP_404_NOT_FOUND, 'err_msg': '不存在的用户信息，请重新输入'})
+        try:
+            Users.objects.get(user_id=user_id)
+        except Exception as e:
+            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
             return fn(request, *args, **kwargs)
+
     return _check
