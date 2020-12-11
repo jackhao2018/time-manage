@@ -11,7 +11,7 @@ import datetime
 
 _CURRENT_TIME = datetime.datetime.now().strftime( '%Y-%m-%d') #  %H:%M:%S')
 
-print(f'当前时间是：{_CURRENT_TIME}')
+print(f'测试数据{_CURRENT_TIME}')
 
 from datetime import date, timedelta
 

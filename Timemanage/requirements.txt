@@ -1,0 +1,6 @@
+asgiref==3.2.10
+Django==3.1.1
+djangorestframework==3.12.1
+mysqlclient @ file:///D:/time-manage/env/mysqlclient-2.0.1-cp38-cp38-win_amd64.whl
+pytz==2020.1
+sqlparse==0.4.1
