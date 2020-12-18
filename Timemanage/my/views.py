@@ -7,7 +7,7 @@ from common.decorator import check_user
 from .serializer import CollectSerializer
 from .models import Collects
 
-@method_decorator(check_user, name='dispatch')
+
 class CollectView(APIView):
 
     #todo:由于涉及到了多表联查,这里暂时使用的原生sql后续再优化成ORM模式
