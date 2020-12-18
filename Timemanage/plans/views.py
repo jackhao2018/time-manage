@@ -67,7 +67,7 @@ class PlansView(APIView):
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
 
 
-@method_decorator(check_user, name='dispatch')
+# @method_decorator(check_user, name='dispatch')
 class PolicyDetailsView(APIView):
 
     @staticmethod
