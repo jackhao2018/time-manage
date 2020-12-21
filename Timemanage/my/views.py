@@ -7,7 +7,7 @@ from common.decorator import check_user
 from .serializer import CollectSerializer
 from .models import Collects
 
-
+#@method_decorator(check_user, name='dispatch')
 class CollectView(APIView):
 
     #todo:由于涉及到了多表联查,这里暂时使用的原生sql后续再优化成ORM模式
@@ -15,7 +15,7 @@ class CollectView(APIView):
     @staticmethod
     def get(request):
         """查询我收藏的策略"""
-        _SQL = """select a.strategy_id, c.user_name, b.strategy_name, b.strategy_details, b.remarks from collects a, 
+        _SQL = """select a.strategy_id, c.user_name, b.strategy_name, b.strategy_details, b.remarks, a.collect_id from collects a, 
         strategys b, users c WHERE a.user_id=c.user_id and a.strategy_id=b.strategy_id and a.user_id={}"""
 
         user_id = request.GET.get('user_id')

@@ -1,10 +1,12 @@
+from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from .serializer import StrategySerializer
 from django.http import JsonResponse
 from .models import Strategys
 from rest_framework import status
+from common.decorator import check_user
 
-
+#@method_decorator(check_user, name='dispatch')
 class StrategysView(APIView):
     """
     post: 为用户新增策略

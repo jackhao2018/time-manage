@@ -7,7 +7,7 @@ from strategys.models import Strategys
 from common.decorator import check_user
 from .serializer import PlanSerializer, PolicyDetailsSerializer
 
-# @method_decorator(check_user, name='dispatch')
+#@method_decorator(check_user, name='dispatch')
 class PlansView(APIView):
 
     @staticmethod
@@ -67,7 +67,7 @@ class PlansView(APIView):
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除计划:{}'})
 
 
-# @method_decorator(check_user, name='dispatch')
+#@method_decorator(check_user, name='dispatch')
 class PolicyDetailsView(APIView):
 
     @staticmethod
@@ -126,7 +126,7 @@ class PolicyDetailsView(APIView):
     @staticmethod
     def put(request, *args, **kwargs):
         data_dict = request.data
-        # data_dict = json.dumps(response.renderer_context['request'].data)
+
         try:
             update_obj = PolicyDetails.objects.get(detail_id=data_dict['detail_id'])
 
