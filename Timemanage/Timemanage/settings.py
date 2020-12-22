@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Timemanage.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# 使用系统变量的方式，填写数据库的相关信息，增加项目的安全�?
+# 使用系统变量的方式，填写数据库的相关信息，增加项目的安全性?
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -132,3 +132,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# STATIC ROOT 和 STATIC URL
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = "/static/"
+
+# MEDIA ROOT 和 MEDIA URL
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
