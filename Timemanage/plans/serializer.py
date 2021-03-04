@@ -82,18 +82,18 @@ class PlanSerializer(serializers.ModelSerializer):
 
 class PolicyDetailsSerializer(serializers.ModelSerializer):
 
-    strategy_id = serializers.IntegerField()
-    plan_id = serializers.IntegerField()
+    # strategy_id = serializers.IntegerField()
+    # plan_id = serializers.IntegerField()
 
     class Meta:
         model = PolicyDetails
         fields = '__all__'
 
-    @staticmethod
-    def validate_plan_id(data):
-        if data is None:
-            raise serializers.ValidationError('计划ID不能为空')
-        return data
+    # @staticmethod
+    # def validate_plan_id(data):
+    #     if data is None:
+    #         raise serializers.ValidationError('计划ID不能为空')
+    #     return data
 
     def validate(self, attrs):
 
@@ -101,7 +101,7 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         execution_time = attrs.get('execution_time')
 
         if current_time > execution_time:
-            raise  serializers.ValidationError('执行时间不能小于当前时间')
+            raise serializers.ValidationError('执行时间不能小于当前时间')
         # elif begin_time > end_time:
         #     raise serializers.ValidationError('计划结束时间不能小与开始时间')
         return attrs

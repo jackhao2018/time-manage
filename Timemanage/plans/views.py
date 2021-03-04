@@ -73,11 +73,10 @@ class PolicyDetailsView(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         user_id = request.GET.get('user_id')
-        plan_id = request.GET.get('plan_id')
-        strategy_id = request.GET.get('strategy_id')
+
 
         try:
-            policy_details_info = PolicyDetails.objects.filter(user_id=user_id, strategy_id=strategy_id, plan_id=plan_id)
+            policy_details_info = PolicyDetails.objects.filter(user_id=user_id)
             print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
