@@ -16,6 +16,7 @@ class PolicyDetails(models.Model):
     execution_time_description = models.CharField(max_length=255, blank=True, null=True)
     remarks = models.CharField(max_length=500, blank=True, null=True)
     user_id = models.IntegerField()
+    level = models.IntegerField()
 
     class Meta:
         managed = False

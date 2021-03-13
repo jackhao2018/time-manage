@@ -99,6 +99,8 @@ class PolicyDetailsView(APIView):
         data_dic = request.data
 
         strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=request.data['strategy_id'])
+        plan_level = Plans.objects.values('level').filter(plan_id=request.data['plan_id'])
+        plan_remarks = Plans.objects.values('remarks').filter(plan_id=request.data['plan_id'])
 
         details_list = strategy_details[0]['strategy_details'].split(',')
 
@@ -106,11 +108,13 @@ class PolicyDetailsView(APIView):
 
         today = date.today()
 
-        for i in details_list :
+        for i in details_list:
 
             d2 = today + timedelta(int(i))
 
             data_dic['execution_time'] = d2.isoformat()
+            data_dic['level'] = plan_level[0]['level']
+            data_dic['remarks'] = plan_remarks[0]['remarks']
 
             try:
                 serializer = PolicyDetailsSerializer(data=data_dic)
@@ -129,7 +133,7 @@ class PolicyDetailsView(APIView):
         try:
             update_obj = PolicyDetails.objects.get(detail_id=data_dict['detail_id'])
 
-            serializer =PolicyDetailsSerializer(instance=update_obj, data=data_dict)
+            serializer = PolicyDetailsSerializer(instance=update_obj, data=data_dict)
 
             if serializer.is_valid(raise_exception=True):
                 serializer.save()

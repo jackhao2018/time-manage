@@ -13,7 +13,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plans
-        fields = ('plan_id' ,'user_id', 'strategy_id', 'plan_name', 'plan_type','begin_time', 'end_time', 'status', 'remarks', 'level')
+        fields = ('plan_id', 'user_id', 'strategy_id', 'plan_name', 'plan_type', 'begin_time', 'end_time', 'status', 'remarks', 'level')
 
     @staticmethod
     def validate_plan_name(data):
@@ -28,7 +28,7 @@ class PlanSerializer(serializers.ModelSerializer):
         end_time = attrs.get('end_time')
 
         if current_time > begin_time:
-            raise  serializers.ValidationError('计划开始时间不能小与当前时间')
+            raise serializers.ValidationError('计划开始时间不能小与当前时间')
         elif begin_time > end_time:
             raise serializers.ValidationError('计划结束时间不能小与开始时间')
 
@@ -115,11 +115,12 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         plan_id = data.get('plan_id')
         execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
+        level = data.get('level')
 
         instance = PolicyDetails.objects.create(user_id=user_id, strategy_id=strategy_id,
-                                        execution_time=execution_time, plan_id=plan_id,
-                                        execution_time_description=execution_time_description,
-                                        remarks=remarks)
+                                                execution_time=execution_time, plan_id=plan_id,
+                                                execution_time_description=execution_time_description,
+                                                remarks=remarks, level=level)
         return instance
 
     def update(self, instance, data):
@@ -130,6 +131,7 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         plan_id = data.get('plan_id')
         execution_time_description = data.get('execution_time_description')
         user_id = data.get('user_id')
+        level = data.get('level')
 
         instance.user_id = user_id
         instance.plan_id = plan_id
@@ -137,6 +139,7 @@ class PolicyDetailsSerializer(serializers.ModelSerializer):
         instance.execution_time = execution_time
         instance.execution_time_description = execution_time_description
         instance.remarks = remarks
+        instance.level = level
 
         instance.save()
         return instance
