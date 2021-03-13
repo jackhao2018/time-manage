@@ -73,10 +73,19 @@ class PolicyDetailsView(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         user_id = request.GET.get('user_id')
-
+        plan_id = request.GET.get('plan_id')
+        strategy_id = request.GET.get('strategy_id')
+        begin_time = request.GET.get('begin_time')
+        end_time = request.GET.get('end_time')
 
         try:
-            policy_details_info = PolicyDetails.objects.filter(user_id=user_id)
+            if strategy_id and plan_id:
+                policy_details_info = PolicyDetails.objects.filter(user_id=user_id, plan_id=plan_id,
+                                                                   strategy_id=strategy_id,
+                                                                   execution_time__range=(begin_time, end_time))
+            else:
+                policy_details_info = PolicyDetails.objects.filter(user_id=user_id,
+                                                                   execution_time__range=(begin_time, end_time))
             print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
