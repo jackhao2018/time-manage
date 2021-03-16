@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'Timemanage.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'qianye',
+        'NAME': 'qianye',
         'USER': 'root',
         'PASSWORD': 'jack_123444',
         'HOST': '101.200.201.99',

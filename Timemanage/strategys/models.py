@@ -6,16 +6,14 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
 class Strategys(models.Model):
     strategy_id = models.AutoField(primary_key=True)
     creator = models.IntegerField()
     strategy_name = models.CharField(max_length=255)
     strategy_details = models.CharField(max_length=255)
     remarks = models.CharField(max_length=255, blank=True, null=True)
+    is_share = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'strategys'
-# Unable to inspect table 'policy_datails'
-# The error was: (1146, "Table 'qianye.policy_datails' doesn't exist")
