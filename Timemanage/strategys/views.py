@@ -71,9 +71,10 @@ class StrategysView(APIView):
     def delete(request, *args, **kwargs):
 
         strategy_id = request.data['strategy_id']
-        print(strategy_id)
+        # print(strategy_id)
         try:
-            Strategys.objects.get(strategy_id=strategy_id).delete()
+
+            Strategys.objects.filter(strategy_id=strategy_id).update(creator=0)
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
