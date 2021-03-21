@@ -1,0 +1,27 @@
+<view class="zonglan-body">
+    <view class="content">
+        <block wx:for="{{ obj }}" wx:for-item="item" wx:for-index="index">
+            <view class="{{['kuai',(showChecked)?'rightKuai':'']}}" index="{{ index }}"
+                  data-event-opts="{{[['longpress',[['logoTime',['$event']]]],['tap',[['onSet',[index]]]]]}}"
+                  bindlongpress="__e" bindtap="__e">
+                <block wx:if="{{ showChecked }}">
+                    <checkbox class="checkbox" value="{{ item.check }}" checked="{{ item.check }}"
+                              data-event-opts="{{[['tap',[['changeChecked',[index]]]]]}}" bindtap="__e"></checkbox>
+                </block>
+                <view class="head">{{ ''+item.strategy_name+''}}</view>
+                <view class="box">
+                    <view class="img">
+                        <image src mode></image>
+                    </view>
+                    <view class="bottom">
+                        <view class="p">{{ ''+item.strategy_details+''}}</view>
+                        <view class="time">{{ '备注：'+item.remarks+''}}</view>
+                    </view>
+                </view>
+            </view>
+        </block>
+    </view>
+    <button class="delete ring" type="primary" data-event-opts="{{[['tap',[['addFun',['appCeLue/appCeLue']]]]]}}"
+            bindtap="__e">+
+    </button>
+</view>

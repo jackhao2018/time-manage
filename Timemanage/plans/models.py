@@ -19,7 +19,7 @@ class PolicyDetails(models.Model):
     level = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'policy_details'
         unique_together = (('user_id', 'plan_id', 'strategy_id', 'execution_time'),)
 
@@ -40,5 +40,5 @@ class Plans(models.Model):
     plan_type = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'plans'

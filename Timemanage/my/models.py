@@ -17,7 +17,7 @@ class Users(models.Model):
     remarks = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'users'
 
 
@@ -27,6 +27,6 @@ class Collects(models.Model):
     strategy_id = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'collects'
         unique_together = (('user_id', 'strategy_id'),)
