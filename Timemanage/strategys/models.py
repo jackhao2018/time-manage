@@ -15,5 +15,5 @@ class Strategys(models.Model):
     is_share = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'strategys'
