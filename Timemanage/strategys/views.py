@@ -36,22 +36,24 @@ class StrategysView(APIView):
         data_dic = request.data
         data_dic['creator'] = data_dic['user_id']
         del data_dic['user_id']
-        print(f'当前的入参值为：{data_dic}')
+
         if int(data_dic['customize']) == 1:
             if int(data_dic['mode']) == 0:
-                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
-                                                                 data_dic['end_time']).fixed_interval(int(
-                    data_dic['num']))
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                                           data_dic[
+                                                                                               'end_time']).make_date_from_list(
+                    int(
+                        data_dic['num']), mode='day')])
             elif int(data_dic['mode']) == 1:
-                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
-                                                                 data_dic['end_time']).weekly(
-                    int(data_dic['num']), data_dic['interval'])
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                                           data_dic[
+                                                                                               'end_time']).make_date_from_list(
+                    int(data_dic['num']), int(data_dic['interval']), mode='week')])
             elif int(data_dic['mode']) == 2:
-                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
-                                                                 data_dic['end_time']).per_month(
-                    int(data_dic['num']))
-        else:
-            pass
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                                           data_dic[
+                                                                                               'end_time']).make_date_from_list(
+                    int(data_dic['num']), mode='month')])
 
         try:
             serializer = StrategySerializer(data=data_dic)
@@ -71,6 +73,20 @@ class StrategysView(APIView):
 
         data_dic['creator'] = data_dic['user_id']
         del data_dic['user_id']
+
+        if int(data_dic['customize']) == 1:
+            if int(data_dic['mode']) == 0:
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).make_date_from_list(int(
+                    data_dic['num']), mode='day')])
+            elif int(data_dic['mode']) == 1:
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).make_date_from_list(
+                    int(data_dic['num']), int(data_dic['interval']), mode='week')])
+            elif int(data_dic['mode']) == 2:
+                data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).make_date_from_list(
+                    int(data_dic['num']), mode='month')])
 
         try:
             strategy_info = Strategys.objects.get(strategy_id=data_dic['strategy_id'])

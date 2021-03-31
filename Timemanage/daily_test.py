@@ -112,16 +112,9 @@ class GetStrategyDedail:
 # print(GetStrategyDedail('2021-04-01', '2021-06-09').make_date_from_list(6, mode='week'))
 #
 # # 或者4月1号到6月9号中，所有每隔两个周末的周日日期
-# print('\n每两周的周六')
-# print(GetStrategyDedail('2021-04-01', '2021-06-09').make_date_from_list(5, 2, mode='week'))
-#
+print('\n每两周的周六')
+print(GetStrategyDedail('2021-04-05', '2021-09-30').make_date_from_list(5, 1, mode='week'))
+
 # # 或者4月1号到6月8号中，每个月的9号
 # print('\n每个月的9号')
 # print(GetStrategyDedail('2021-04-01', '2021-08-08').make_date_from_list(9, mode='month'))
-
-
-test_list = [1, 2, 4, 9]
-# ''.join(test_list)
-
-print(''.join(test_list))
-# print(test_list)
