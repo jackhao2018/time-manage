@@ -113,6 +113,7 @@ class PolicyDetailsView(APIView):
         strategy_details = Strategys.objects.values('strategy_details').filter(strategy_id=request.data['strategy_id'])
         plan_level = Plans.objects.values('level').filter(plan_id=request.data['plan_id'])
         plan_remarks = Plans.objects.values('remarks').filter(plan_id=request.data['plan_id'])
+        plan_name = Plans.objects.values('plan_name').filter(plan_id=request.data['plan_id'])
 
         details_list = strategy_details[0]['strategy_details'].split(',')
 
@@ -124,6 +125,7 @@ class PolicyDetailsView(APIView):
 
             d2 = today + timedelta(int(i))
 
+            data_dic['execution_time_description'] = plan_name[0]['plan_name']
             data_dic['execution_time'] = d2.isoformat()
             data_dic['level'] = plan_level[0]['level']
             data_dic['remarks'] = plan_remarks[0]['remarks']

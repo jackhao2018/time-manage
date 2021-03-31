@@ -4,7 +4,7 @@ from .serializer import StrategySerializer
 from django.http import JsonResponse
 from .models import Strategys
 from rest_framework import status
-from common.decorator import check_user
+from common.commom_api import GetStrategyDedail
 
 #@method_decorator(check_user, name='dispatch')
 class StrategysView(APIView):
@@ -36,6 +36,22 @@ class StrategysView(APIView):
         data_dic = request.data
         data_dic['creator'] = data_dic['user_id']
         del data_dic['user_id']
+        print(f'当前的入参值为：{data_dic}')
+        if int(data_dic['customize']) == 1:
+            if int(data_dic['mode']) == 0:
+                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).fixed_interval(int(
+                    data_dic['num']))
+            elif int(data_dic['mode']) == 1:
+                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).weekly(
+                    int(data_dic['num']), data_dic['interval'])
+            elif int(data_dic['mode']) == 2:
+                data_dic['strategy_details'] = GetStrategyDedail(data_dic['begin_time'],
+                                                                 data_dic['end_time']).per_month(
+                    int(data_dic['num']))
+        else:
+            pass
 
         try:
             serializer = StrategySerializer(data=data_dic)
