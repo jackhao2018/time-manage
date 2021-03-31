@@ -13,10 +13,13 @@ class PlansView(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         user_id = request.GET.get('user_id')
+        plan_id = request.GET.get('plan_id')
 
         try:
-            plan_info = Plans.objects.filter(user_id=user_id)
-
+            if plan_id:
+                plan_info = Plans.objects.filter(user_id=user_id, plan_id=plan_id)
+            else:
+                plan_info = Plans.objects.filter(user_id=user_id)
             serializer = PlanSerializer(instance=plan_info, many=True)
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
@@ -85,10 +88,13 @@ class PolicyDetailsView(APIView):
                                                                    strategy_id=strategy_id,
                                                                    execution_time__range=(begin_time, end_time),
                                                                    level=level)
-            else:
+            elif user_id and begin_time and end_time and level:
                 policy_details_info = PolicyDetails.objects.filter(user_id=user_id,
                                                                    execution_time__range=(begin_time, end_time),
                                                                    level=level)
+            else:
+                policy_details_info = PolicyDetails.objects.filter(user_id=user_id, execution_time__range=(begin_time, end_time))
+
             print(policy_details_info.query)
             serializer = PolicyDetailsSerializer(instance=policy_details_info, many=True)
 
