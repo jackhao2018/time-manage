@@ -128,11 +128,13 @@ class PolicyDetailsView(APIView):
         today = date.today()
 
         for i in details_list:
-
-            d2 = today + timedelta(int(i))
+            if len(i)>4:
+                data_dic['execution_time'] = i
+            else:
+                d2 = today + timedelta(int(i))
+                data_dic['execution_time'] = d2.isoformat()
 
             data_dic['execution_time_description'] = plan_name[0]['plan_name']
-            data_dic['execution_time'] = d2.isoformat()
             data_dic['level'] = plan_level[0]['level']
             data_dic['remarks'] = plan_remarks[0]['remarks']
 
