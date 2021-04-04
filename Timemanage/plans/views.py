@@ -128,7 +128,7 @@ class PolicyDetailsView(APIView):
         today = date.today()
 
         for i in details_list:
-            if len(i)>4:
+            if len(i) > 4:
                 data_dic['execution_time'] = i
             else:
                 d2 = today + timedelta(int(i))

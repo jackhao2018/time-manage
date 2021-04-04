@@ -10,7 +10,7 @@ class Strategys(models.Model):
     strategy_id = models.AutoField(primary_key=True)
     creator = models.IntegerField()
     strategy_name = models.CharField(max_length=255)
-    strategy_details = models.CharField(max_length=255)
+    strategy_details = models.CharField(max_length=2550)
     remarks = models.CharField(max_length=255, blank=True, null=True)
     is_share = models.IntegerField(blank=True, null=True)
 
