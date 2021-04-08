@@ -43,7 +43,8 @@ class StrategySerializer(serializers.ModelSerializer):
         strategy_details = data.get('strategy_details')
         remarks = data.get('remarks')
         is_share = data.get('is_share')
-        instance = Strategys.objects.create(creator=user_id, strategy_name=strategy_name, strategy_details=strategy_details, remarks=remarks, is_share=is_share)
+        initialize =  data.get('initialize')
+        instance = Strategys.objects.create(creator=user_id, strategy_name=strategy_name, strategy_details=strategy_details, remarks=remarks, is_share=is_share, initialize=initialize)
         return instance
 
     def update(self, instance, data):
@@ -53,11 +54,13 @@ class StrategySerializer(serializers.ModelSerializer):
         strategy_details = data.get('strategy_details')
         remarks = data.get('remarks')
         is_share = data.get('is_share')
+        initialize = data.get('initialize')
 
         instance.creator = creator
         instance.strategy_name = strategy_name
         instance.strategy_details = strategy_details
         instance.remarks = remarks
         instance.is_share = is_share
+        instance.initialize = initialize
         instance.save()
         return instance
