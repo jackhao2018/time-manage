@@ -168,14 +168,20 @@ class PolicyDetailsView(APIView):
     def delete(request, *args, **kwargs):
 
         detail_id = request.data['detail_id']
+        plan_id = request.data['plan_id']
+        strategy_id = request.data['strategy_id']
+        user_id = request.data['user_id']
 
         try:
-            PolicyDetails.objects.get(detail_id=detail_id).delete()
+            if plan_id or strategy_id:
+                PolicyDetails.objects.filter(plan_id=plan_id, strategy_id=strategy_id, user_id=user_id).delete()
+            else:
+                PolicyDetails.objects.get(detail_id=detail_id).delete()
 
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
-            return JsonResponse({'code':status.HTTP_200_OK, 'msg': '成功删除对应的细则'})
+            return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除对应的细则'})
 
 
 class MDPlanView(APIView):
