@@ -123,13 +123,17 @@ class PolicyDetailsView(APIView):
 
         details_list = strategy_details[0]['strategy_details'].split(',')
 
-        from datetime import date, timedelta
+        from datetime import date, timedelta, datetime
 
         today = date.today()
 
         for i in details_list:
+
             if len(i) > 4:
-                data_dic['execution_time'] = i
+                if  today < datetime.strptime(i, '%Y-%m-%d').date():
+                    data_dic['execution_time'] = i
+                else:
+                    continue
             else:
                 d2 = today + timedelta(int(i))
                 data_dic['execution_time'] = d2.isoformat()
@@ -140,13 +144,12 @@ class PolicyDetailsView(APIView):
 
             try:
                 serializer = PolicyDetailsSerializer(data=data_dic)
-
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
             except Exception as e:
                 return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
             else:
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
-        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
+                return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
     @staticmethod
     def put(request, *args, **kwargs):
