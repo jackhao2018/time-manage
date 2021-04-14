@@ -130,7 +130,7 @@ class PolicyDetailsView(APIView):
         for i in details_list:
 
             if len(i) > 4:
-                if  today < datetime.strptime(i, '%Y-%m-%d').date():
+                if today <= datetime.strptime(i, '%Y-%m-%d').date():
                     data_dic['execution_time'] = i
                 else:
                     continue
@@ -148,8 +148,8 @@ class PolicyDetailsView(APIView):
                     serializer.save()
             except Exception as e:
                 return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
-            else:
-                return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
+
+        return JsonResponse({'code': status.HTTP_200_OK, 'msg': '计划执行时间已生成'}, safe=False)
 
     @staticmethod
     def put(request, *args, **kwargs):
