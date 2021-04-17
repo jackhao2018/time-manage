@@ -16,6 +16,7 @@ class Strategys(models.Model):
     remarks = models.CharField(max_length=255, blank=True, null=True)
     is_share = models.IntegerField(blank=True, null=True)
     initialize = models.CharField(max_length=255, blank=True, null=True)
+    from_field = models.IntegerField(null=True)
 
     class Meta:
         managed = False
