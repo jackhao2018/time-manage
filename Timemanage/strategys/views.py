@@ -48,7 +48,7 @@ class StrategysView(APIView):
                 data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                                            data_dic[
                                                                                                'end_time']).make_date_from_list(
-                    int(data_dic['num']), int(data_dic['interval']), mode='week')])
+                    data_dic['num'], int(data_dic['interval']), mode='week')])
             elif int(data_dic['mode']) == 2:
                 data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                                            data_dic[
@@ -84,7 +84,7 @@ class StrategysView(APIView):
                 elif int(data_dic['mode']) == 1:
                     data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                      data_dic['end_time']).make_date_from_list(
-                        int(data_dic['num']), int(data_dic['interval']), mode='week')])
+                        data_dic['num'], int(data_dic['interval']), mode='week')])
                 elif int(data_dic['mode']) == 2:
                     data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                      data_dic['end_time']).make_date_from_list(

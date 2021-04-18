@@ -28,14 +28,25 @@ class GetStrategyDedail:
         :param weeks:间隔周数，默认间隔一周
         :return:不同时间段内，对应策略的执行时间间隔列表
         """
-        while self.begin_date.weekday() != i:
-            self.begin_date += datetime.timedelta(days=1)
+        num_list = list()
+        init_day = self.today
+        if len(i) > 1:
+            while init_day <= self.end_date.date():
+                if init_day.weekday() in i:
+                    num = (init_day - self.today).days
+                    num_list.append(num)
+                init_day += datetime.timedelta(days=1)
+            return num_list
+        else:
+            while self.begin_date.weekday() != i[0]:
+                self.begin_date += datetime.timedelta(days=1)
 
-        num = (self.begin_date.date() - self.today).days
-        fixed_list = self.fixed_interval(weeks * 7)
-        fixed_list.insert(0, num)
+            num = (self.begin_date.date() - self.today).days
+            fixed_list = self.fixed_interval(weeks * 7)
+            fixed_list.insert(0, num)
 
-        return fixed_list
+            return fixed_list
+
 
     def per_month(self, date):
         """
@@ -91,8 +102,13 @@ class GetStrategyDedail:
                 date = self.today + datetime.timedelta(i)
                 date_list.append(date.isoformat())
         else:
-            for i in details_list[1:]:
-                date = first_date + datetime.timedelta(i)
-                date_list.append(date.isoformat())
+            if len(num) == 1:
+                for i in details_list[1:]:
+                    date = first_date + datetime.timedelta(i)
+                    date_list.append(date.isoformat())
+            else:
+                for i in details_list:
+                    date = self.today + datetime.timedelta(days=i)
+                    date_list.append(date.isoformat())
 
         return date_list
