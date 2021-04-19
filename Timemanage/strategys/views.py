@@ -21,7 +21,7 @@ class StrategysView(APIView):
         creator = request.GET.get('user_id')
 
         try:
-            strategy_info = Strategys.objects.filter(creator=creator)
+            strategy_info = Strategys.objects.filter(creator=creator, from_field=2)
             serializer = StrategySerializer(instance=strategy_info, many=True)
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})

@@ -47,7 +47,6 @@ class GetStrategyDedail:
 
             return fixed_list
 
-
     def per_month(self, date):
         """
         date:指定要获取的每个月的日期
