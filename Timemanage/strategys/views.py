@@ -19,10 +19,15 @@ class StrategysView(APIView):
         :return:
         """
         creator = request.GET.get('user_id')
+        from_field = request.GET.get('from_field')
 
         try:
-            strategy_info = Strategys.objects.filter(creator=creator, from_field=2)
-            serializer = StrategySerializer(instance=strategy_info, many=True)
+            if from_field is not None:
+                strategy_info = Strategys.objects.filter(creator=creator, from_field=2)
+                serializer = StrategySerializer(instance=strategy_info, many=True)
+            else:
+                strategy_info = Strategys.objects.filter(creator=creator)
+                serializer = StrategySerializer(instance=strategy_info, many=True)
         except Exception as e:
             return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
@@ -42,8 +47,7 @@ class StrategysView(APIView):
                 data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                                            data_dic[
                                                                                                'end_time']).make_date_from_list(
-                    int(
-                        data_dic['num']), mode='day')])
+                    int(data_dic['num']), mode='day')])
             elif int(data_dic['mode']) == 1:
                 data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
                                                                                            data_dic[
@@ -51,8 +55,7 @@ class StrategysView(APIView):
                     data_dic['num'], int(data_dic['interval']), mode='week')])
             elif int(data_dic['mode']) == 2:
                 data_dic['strategy_details'] = ','.join([str(x) for x in GetStrategyDedail(data_dic['begin_time'],
-                                                                                           data_dic[
-                                                                                               'end_time']).make_date_from_list(
+                                                                                           data_dic['end_time']).make_date_from_list(
                     int(data_dic['num']), mode='month')])
 
         try:
@@ -121,6 +124,10 @@ class MDstrategyView(APIView):
         try:
             Strategys.objects.filter(strategy_id__in=del_list).delete()
         except Exception as e:
-            return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
+            if f'{e}'.find('Cannot delete or update a parent row'):
+                err_msg = '策略已被使用，请先删除使用该策略的计划'
+                return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': err_msg})
+            else:
+                return JsonResponse({'code': status.HTTP_500_INTERNAL_SERVER_ERROR, 'err_msg': f'{e}'})
         else:
             return JsonResponse({'code': status.HTTP_200_OK, 'msg': '成功删除策略:{}'})
