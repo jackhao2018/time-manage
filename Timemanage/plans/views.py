@@ -177,7 +177,9 @@ class PolicyDetailsView(APIView):
         execution_time = request.data['execution_time']
 
         try:
-            if plan_id or strategy_id:
+            if execution_time is None:
+                PolicyDetails.objects.filter(plan_id=plan_id, strategy_id=strategy_id, user_id=user_id).delete()
+            elif plan_id or strategy_id:
                 PolicyDetails.objects.filter(plan_id=plan_id, strategy_id=strategy_id, user_id=user_id, execution_time__gte=execution_time).delete()
             else:
                 PolicyDetails.objects.get(detail_id=detail_id).delete()
